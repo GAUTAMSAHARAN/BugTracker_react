@@ -1,0 +1,24 @@
+.side-menu{
+    background-color: #fafafa !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 30px !important;
+    width: 300px !important;
+    font-size: 15px !important;
+    border: 0 !important;
+    .workplace{
+        font-size: 20px !important;
+        border-bottom  : 2px solid #f1f1f1 !important;
+        margin: 10px !important;
+        padding-left: 0 !important;
+        padding-bottom: 5px !important;
+    }
+    .line{
+        border-bottom: 2px solid #f1f1f1 !important;
+        margin-bottom: 10px;
+        padding-left: 0 !important;
+        width: 218px !important;
+        padding-top : 0 !important;
+        margin-left: 10px !important    ;
+    }
+}
