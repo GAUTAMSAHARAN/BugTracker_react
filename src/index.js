@@ -9,6 +9,7 @@ ReactDOM.render(
   <React.StrictMode>
   <Navbar />
   <MenuTab />
+  <Home />  
   </React.StrictMode>,
   document.getElementById('root')
 );

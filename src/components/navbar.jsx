@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
-import { Menu } from 'semantic-ui-react';
+import { Input, Icon, Menu, Dropdown  } from 'semantic-ui-react';
 import './styles/navbar.scss';
+
+
+//options for the dropdown menu
+const options = [
+    { key: 1, text: 'This is a super long item', value: 1 },
+    { key: 2, text: 'Dropdown direction can help', value: 2 },
+    { key: 3, text: 'Items are kept within view', value: 3 },
+  ]
 
 class Navbar extends Component {
 
@@ -18,41 +26,44 @@ class Navbar extends Component {
         const { activeItem } = this.state
         return(
          <React.Fragment>
-             <Menu className='navbar'>
-              <Menu.Item
-                name='browse'
-                active={activeItem === 'browse'}
-                onClick={this.handleItemClick}
-              >
-                Browse
-              </Menu.Item>
-      
-              <Menu.Item
-                name='submit'
-                active={activeItem === 'submit'}
-                onClick={this.handleItemClick}
-              >
-                Submit
-              </Menu.Item>
-      
-              <Menu.Menu position='right'>
-                <Menu.Item
-                  name='signup'
-                  active={activeItem === 'signup'}
-                  onClick={this.handleItemClick}
-                >
-                  Sign Up
-                </Menu.Item>
-      
-                <Menu.Item
-                  name='help'
-                  active={activeItem === 'help'}
-                  onClick={this.handleItemClick}
-                >
-                  Help
-                </Menu.Item>
-              </Menu.Menu>
-            </Menu>
+      <Menu icon className='navbar'>
+        <Menu.Item
+          name='bars'
+          active={activeItem === 'bars'}
+          onClick={this.handleItemClick}
+        >
+          <i class="fas fa-bars"></i>
+        </Menu.Item>
+
+        <Menu.Item
+          name='home'
+          active={activeItem === 'home'}
+          onClick={this.handleItemClick}
+        >
+          <i class="fas fa-home"></i>
+        </Menu.Item>
+
+        <Menu.Item>
+          <Input className='icon' id='search' icon='search' placeholder='Search...' />
+         </Menu.Item>
+
+         <Menu.Item position='right'
+          name='home'
+          active={activeItem === 'home'}
+          onClick={this.handleItemClick}
+         >
+          <i class="fas fa-plus"></i>
+        </Menu.Item>
+
+        <Menu.Item 
+          name='home'
+          active={activeItem === 'home'}
+          onClick={this.handleItemClick}
+         >
+          <i class="fas fa-cog"></i>
+        </Menu.Item>
+
+      </Menu>
          </React.Fragment>
         )
     }

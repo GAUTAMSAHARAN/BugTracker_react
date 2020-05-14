@@ -1,3 +1,4 @@
+
 .side-menu{
     background-color: #fafafa !important;
     height: 100vh !important;
@@ -6,12 +7,16 @@
     width: 300px !important;
     font-size: 15px !important;
     border: 0 !important;
+    float: left !important;
+     position: relative !important;
     .workplace{
         font-size: 20px !important;
         border-bottom  : 2px solid #f1f1f1 !important;
         margin: 10px !important;
         padding-left: 0 !important;
         padding-bottom: 5px !important;
+        color: red !important;
+        font-weight: bolder !important;
     }
     .line{
         border-bottom: 2px solid #f1f1f1 !important;
