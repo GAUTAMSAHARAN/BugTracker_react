@@ -1,0 +1,70 @@
+.box{
+    position: relative   !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 40px !important;
+    .main-box{
+        width: 900px !important;
+        .head{
+            width: 900px !important;
+            position: relative !important;
+            border-bottom: 1px solid red !important;
+            .edit{
+                position: absolute;
+                height: 20px;
+                width: 20px;
+                right: 60px;
+                &:hover{
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
+            }
+            .fa-bars{
+                position: absolute;
+                font-size: 20px;
+                right: 25px;
+                &:hover{
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }   
+            }
+            .head-header{
+                height: 200px !important;
+                background-color: rgba(255, 0,0, 0.6);
+            }
+        }
+        .comment{
+            width: 900px !important;
+            border-bottom: 1px solid #FFF4D1;
+            .comment-body{
+                height: fit-content !important;
+                background-color: #FFF4D1 !important;
+            }
+            .extra{
+                height: 80px !important;
+                position: relative;
+                .userimg{
+                    position: absolute !important;
+                    right: 130px !important;
+                    top: 30px !important;
+                    font-size: 30px !important;
+                    color: black !important;
+                }
+                .member{
+                    position: absolute;
+                    right: 65px;
+                    top: 40px;
+                }
+                .name{
+                    position: absolute;
+                    right: 80px;
+                    top: 15px;
+                }
+                .time{
+                    position: absolute;
+                    bottom: 5px;
+                }
+            }
+        }
+    }
+}

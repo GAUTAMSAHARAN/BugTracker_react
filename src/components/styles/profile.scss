@@ -1,0 +1,93 @@
+.box{
+    position: relative   !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 40px !important;
+    .segment{
+        min-height: 240px !important;
+        margin-bottom: 20px !important;
+        border-bottom: 1px solid red !important;
+    }
+    .info{
+        display: grid !important;
+        grid-template-columns: 40% 30% 30% !important;
+        grid-template-rows: 50% 50% !important;
+        .picture{
+            grid-row: 1/span 2;
+            grid-column: 1;
+            width: 300px;
+            margin-left: 50px;
+        }
+        .username{
+            grid-row: 1 !important;
+            grid-column: 2 !important;
+            border: 0 !important;
+        }
+        .email{
+            grid-row: 2 !important;
+            grid-column: 2 !important;
+        }
+        .mobile{
+            grid-row: 1 !important;
+            grid-column: 3 !important;
+        }
+        .links{
+            grid-row: 2;
+            grid-column: 3;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            Button{
+                &:hover{
+                    transform: scale(1.1);
+                }
+            }
+        }
+    }
+    .three-box{
+        display: grid !important;
+        grid-template-columns: 33.333% 33.333% 33.33% !important;
+        grid-template-rows: 100% !important;
+        font-family: 'Luckiest Guy', cursive;    
+        .projects{
+            grid-column: 1;
+            grid-row: 1;
+            background-color: #FFF4D1;
+            border: 2px solid #F1B600;
+            max-width: 360px !important;
+            display: grid;
+            grid-template-rows: 35% 65%;
+            grid-template-columns: 100%;
+            h3{
+                grid-row: 1;
+                margin: auto;
+                font-family: 'Luckiest Guy', cursive;
+                font-size: 30px;
+                color: #6A737C;
+            }
+            p{
+                grid-row: 2;
+                justify-self: center;
+                padding-top: 10px;
+                font-size: 40px;
+            }
+        }
+        .issues{
+            grid-column: 2;
+            grid-row: 1;
+            background-color: #E8E8E8;
+            border: 2px solid #9A9C9F;
+            max-width: 360px !important;
+        }
+        .comments{
+            grid-column: 3;
+            grid-row: 1;
+            background-color: #F2E9E1;
+            border: 2px solid #AB825F;
+            max-width: 360px !important;
+        }
+    }
+}
+.form-segmant{
+    height: 200px !important;
+}

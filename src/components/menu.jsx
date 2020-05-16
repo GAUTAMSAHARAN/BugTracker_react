@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Menu } from 'semantic-ui-react';
 import './styles/menu.scss';
+import { Link } from 'react-router-dom';
 
 
 class MenuTab extends Component{
@@ -21,7 +22,8 @@ class MenuTab extends Component{
         return(
           <React.Fragment>
             <Menu pointing secondary vertical className='side-menu'>
-            <Menu.Item
+            <Menu.Item as={Link}
+              to='/'
               name='home'
               active={activeItem === 'home'}
               onClick={this.handleItemClick}
@@ -29,12 +31,13 @@ class MenuTab extends Component{
             <Menu.Item className='workplace'
                name='WorkPlace'
             />
-            <Menu.Item
+            <Menu.Item as={Link}
+              to='/projects'
               name='Projects'
               active={activeItem === 'Projects'}
               onClick={this.handleItemClick}
             />
-            <Menu.Item
+            <Menu.Item 
               name='Comments'
               active={activeItem === 'Comments'}
               onClick={this.handleItemClick}
@@ -46,7 +49,8 @@ class MenuTab extends Component{
             <Menu.Item className='line'
                name=''
             />
-            <Menu.Item
+            <Menu.Item as={Link}
+              to='/users'
               name='Users'
               active={activeItem === 'Users'}
               onClick={this.handleItemClick}

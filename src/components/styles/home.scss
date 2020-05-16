@@ -12,11 +12,14 @@
         background-color: white !important;
     }
     .option-2{
-        margin-top: 8px !important;
+        margin-top: -10px !important;
         margin-right: 70px !important;
     }
     Button{
         margin-left: 0 !important;
+    }
+    .issue{
+        width: 100% !important;
     }
     .card-content-1{
         display: flex !important;
@@ -59,4 +62,9 @@
 .date-format{
     font-size: 14px;
     margin-left: 10px;
+}
+
+.segment{
+    height: fit-content !important;
+    width: 100% !important;
 }

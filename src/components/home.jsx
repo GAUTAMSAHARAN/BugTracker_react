@@ -8,150 +8,85 @@ class Home extends Component{
         super(props);
 
         this.state = {
-            LatestIssues: [],
-            ImportantIssues: [],
-            myIssues: [],
+            issues: [],
             type: 'none'
         }
 
-        this.updateIssue = this.updateIssue.bind(this)
+        this.updateType = this.updateType.bind(this)
     }
      
     componentDidMount(){
-
-        fetch('http://127.0.0.1:8000/home?important=True')
-         .then(res=>res.json())
-         .then(results=>{
-             results = results.results
-             this.setState({
-                 ImportantIssues: results
-             })
-             console.log(this.state.ImportantIssues);
-         })
-
          fetch('http://127.0.0.1:8000/home/')
          .then(res=>res.json())
          .then(results=>{
-             results = results.results
              this.setState({
-                 LatestIssues: results
+                 issues: results
              })
-             console.log(this.state.LatestIssues);
          })
-
-         fetch('http://127.0.0.1:8000/home?creater=2')
+    }  
+    
+    
+    UpdateIssue(){
+        let type = this.state.type
+        let base_url="http://127.0.0.1:8000/home/"
+        switch(type){
+            case "latest":
+               base_url += ''
+               break
+            case "important":
+               base_url += ''
+               break
+            case "myissues":
+               base_url += ''
+               break
+           default: 
+               base_url += ''
+               break
+        }
+        fetch(base_url)
          .then(res=>res.json())
          .then(results=>{
-             results = results.results
              this.setState({
-                 myIssues: results
+                 issues: results
              })
-             console.log(this.state.myIssues);
          })
-        
     }
     
     IssueList() {
-             if(this.state.type==='latest' || this.state.type==='none'){
-             let listIssues = this.state.LatestIssues.map((issue) => 
-             <Card fluid color='red' id="issue">
+          let listIssues = this.state.issues.map((issue) => 
+          <Card fluid color='red' className="issue">
          
-                <Card.Content className='card-content-1'>
-                <i class="fas fa-plus"></i>
-                <Card.Header className='header'>
-                   { issue.title }
-                </Card.Header>
-                <i class="fas fa-reply"></i>
-                </Card.Content>
-        
-                <Card.Content  className='card-content-2'>
-                <Card.Description className='description'>
-                  { issue.wiki } 
-                </Card.Description>
-                </Card.Content>
-        
-                <Card.Content extra>
-                  <h3 ><span className='date'>Date:</span><span className='date-format'>{ issue.upload_time }</span></h3>
-                </Card.Content>
-     
-             </Card>
-        );       
-        return (
+          <Card.Content className='card-content-1'>
+          <i class="fas fa-plus"></i>
+          <Card.Header className='header'>
+             { issue.title }
+          </Card.Header>
+          <i class="fas fa-reply"></i>
+          </Card.Content>
+  
+          <Card.Content  className='card-content-2'>
+          <Card.Description className='description'>
+            { issue.wiki } 
+          </Card.Description>
+          </Card.Content>
+  
+          <Card.Content extra>
+            <h3 ><span className='date'>Date:</span><span className='date-format'>{ issue.upload_time }</span></h3>
+          </Card.Content>
+
+       </Card>
+        );
+        return(
             listIssues
-        )}
-        else if(this.state.type==='myissues'){
-            let listIssues = this.state.myIssues.map((issue) => 
-            <Card fluid color='red' id="issue">
-         
-            <Card.Content className='card-content-1'>
-            <i class="fas fa-plus"></i>
-            <Card.Header className='header'>
-               { issue.title }
-            </Card.Header>
-            <i class="fas fa-reply"></i>
-            </Card.Content>
-    
-            <Card.Content  className='card-content-2'>
-            <Card.Description className='description'>
-              { issue.wiki } 
-            </Card.Description>
-            </Card.Content>
-    
-            <Card.Content extra>
-              <h3 ><span className='date'>Date:</span><span className='date-format'>{ issue.upload_time }</span></h3>
-            </Card.Content>
- 
-         </Card>
-            );       
-            return (
-                listIssues
-            )} else if(this.state.type==='important'){
-            let listIssues = this.state.ImportantIssues.map((issue) => 
-            <Card fluid color='red' id="issue">
-         
-            <Card.Content className='card-content-1'>
-            <i class="fas fa-plus"></i>
-            <Card.Header className='header'>
-               { issue.title }
-            </Card.Header>
-            <i class="fas fa-reply"></i>
-            </Card.Content>
-    
-            <Card.Content  className='card-content-2'>
-            <Card.Description className='description'>
-              { issue.wiki } 
-            </Card.Description>
-            </Card.Content>
-    
-            <Card.Content extra>
-              <h3 ><span className='date'>Date:</span><span className='date-format'>{ issue.upload_time }</span></h3>
-            </Card.Content>
- 
-         </Card>
-            ); 
-            return (
-                listIssues
-            )}
+        );
       }
       
     
-    updateIssue = (string)=>{ 
-       if(string === "myissues"){
+    updateType = (string)=>{   
            this.setState({
-               type: "myissues"
+               type: string
            })
-           console.log(this.state.type)
-       }if(string === 'important'){
-          this.setState({
-              type: "important"
-          })
-          console.log(this.state.type)
-       }if(string === 'latest'){
-           this.setState({
-               type: "latest"
-           })
-           console.log(this.state.type)
-       }
+           this.updateIssue()
     }
 
     render(){
@@ -166,10 +101,10 @@ class Home extends Component{
                </Button.Group>
                <Divider vertical></Divider>
                <Button.Group floated='right' className='option-2'>
-                 <Button color='teal' basic onClick={(event)=> this.updateIssue('latest')}>Latest</Button>
-                 <Button color='blue'basic onClick={(event)=> this.updateIssue('myissues')}>MyIssues</Button>
+                 <Button color='teal' basic onClick={(event)=> this.updateType('latest')}>Latest</Button>
+                 <Button color='blue'basic onClick={(event)=> this.updateType('myissues')}>MyIssues</Button>
                  <Button color='green' basic>Tags</Button>
-                 <Button color='violet' basic onClick={(event) => this.updateIssue('important')}>Important</Button>
+                 <Button color='violet' basic onClick={(event) => this.updateType('important')}>Important</Button>
                </Button.Group>
                 </Segment>
             <Divider section />
@@ -182,3 +117,5 @@ class Home extends Component{
 }
 
 export default Home;
+
+
