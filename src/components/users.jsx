@@ -15,7 +15,7 @@ import {
 class Users extends Component{
     render(){
         return(
-            <Container className='box'>
+            <Container className='users-box'>
             <Header as='h2'>Users</Header>
             <Divider section />         
             </Container>

@@ -91,7 +91,7 @@ class Home extends Component{
 
     render(){
         return(
-            <Container className='box'>
+            <Container className='home-box'>
             <Header as='h2'>Issues</Header>
             <Divider section />
             <Segment className='segment'>

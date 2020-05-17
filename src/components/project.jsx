@@ -18,7 +18,7 @@ import edit from "./images/edit.png";
 class Project extends Component{
     render(){
         return(
-            <Container className="box">
+            <Container className="project-box">
             <Header as="h2">Projects</Header>
             <Divider section />
             <div className="main-box">

@@ -16,13 +16,13 @@ import edit from './images/edit.png';
 class Issue extends Component{
     render(){
         return(
-          <Container className='box'>
+          <Container className='issue-box'>
           <Header as='h2'>Issues</Header>
           <Divider section />
-          <div className="main-box">
-          <Card className='head'>
-            <Card.Content className='head-header'>
-                <img src={edit} alt='edit'  className='edit' />
+          <div className="main-issue-box">
+          <Card className='issue-head'>
+            <Card.Content className='issue-head-header'>
+                <img src={edit} alt='edit'  className='issue-edit' />
                 <i class="fas fa-bars"></i>
               <Card.Header>Matthew</Card.Header>
               <Card.Description>
@@ -37,7 +37,7 @@ class Issue extends Component{
           
           <Divider section />
 
-          <Card className='comment'>
+          <Card className='issue-comment'>
             <Card.Content className='comment-body'>
               <Card.Description>
               Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book. It usually begins with:
@@ -54,7 +54,7 @@ The purpose of lorem ipsum is to create a natural looking block of text (sentenc
             </Card.Content>
           </Card>
 
-          <Card className='comment'>
+          <Card className='issue-comment'>
             <Card.Content className='comment-body'>
               <Card.Description>
               Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book. It usually begins with:
