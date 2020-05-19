@@ -14,24 +14,47 @@ import {
 import edit from './images/edit.png';
 
 class Issue extends Component{
+
+    constructor(props){
+      super(props)
+      this.state={
+         issue: [],
+         issueId: this.props.location.state
+      }
+    }
+
+    componentDidMount(){
+       const { IssueId } = this.props.location.state 
+       fetch(`http://127.0.0.1:8000/issues/${IssueId}/`)
+        .then(res => res.json())
+        .then(results => {
+             this.setState({
+               issue: results
+             })
+        })
+    }
+
     render(){
         return(
           <Container className='issue-box'>
           <Header as='h2'>Issues</Header>
-          <Divider section />
+          <Divider section /> 
           <div className="main-issue-box">
           <Card className='issue-head'>
             <Card.Content className='issue-head-header'>
                 <img src={edit} alt='edit'  className='issue-edit' />
                 <i class="fas fa-bars"></i>
-              <Card.Header>Matthew</Card.Header>
+         <Card.Header>{ this.state.issue.title }</Card.Header>
               <Card.Description>
-                Matthew is a musician living in Nashville.
+                  { this.state.issue.wiki }
               </Card.Description>
             </Card.Content>
-            <Card.Content extra>
+            <Card.Content className='extra-card' extra>
                 <Icon name='user' />
                 22 comments
+                <div className="time">
+                  <Icon name='clock' />
+                </div>
             </Card.Content>
           </Card>
           

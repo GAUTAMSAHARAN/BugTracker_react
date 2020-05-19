@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './styles/home.scss';
 import { Container, Header, Divider, Button, Segment, Card, CardContent } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
+
 
 class Home extends Component{
       
@@ -9,14 +11,21 @@ class Home extends Component{
 
         this.state = {
             issues: [],
-            type: 'none'
+            type: 'latest',
+            IsloggedIn: sessionStorage.getItem('IsLoggedIn'),
+            show: false
         }
 
-        this.updateType = this.updateType.bind(this)
+        this.UpdateIssue = this.UpdateIssue.bind(this)
+        this.Show = this.Show.bind(this)
     }
      
     componentDidMount(){
-         fetch('http://127.0.0.1:8000/home/')
+         fetch('http://127.0.0.1:8000/issues/', {
+            headers: {
+                'Authorization': `Token ${sessionStorage.getItem('token')}`,
+               },
+         })
          .then(res=>res.json())
          .then(results=>{
              this.setState({
@@ -26,21 +35,21 @@ class Home extends Component{
     }  
     
     
-    UpdateIssue(){
-        let type = this.state.type
-        let base_url="http://127.0.0.1:8000/home/"
+    UpdateIssue(string){
+        let type = string
+        let base_url="http://127.0.0.1:8000/issues/"
         switch(type){
             case "latest":
-               base_url += ''
+               base_url += '?ordering=upload_time'
                break
             case "important":
-               base_url += ''
+               base_url += '?important=true'
                break
             case "myissues":
                base_url += ''
                break
            default: 
-               base_url += ''
+               base_url += '?ordering=upload_time'
                break
         }
         fetch(base_url)
@@ -49,31 +58,56 @@ class Home extends Component{
              this.setState({
                  issues: results
              })
+
          })
     }
     
+    Show(){
+        if(this.state.show === false){
+            this.setState({
+                show: true
+            })
+        }
+        if(this.state.show === true){
+            this.setState({
+               show: false
+            })
+        }
+    }
+
     IssueList() {
+          let show =  this.state.show
           let listIssues = this.state.issues.map((issue) => 
-          <Card fluid color='red' className="issue">
+          <Card fluid color='red' className="issue" key={issue.id}>
          
           <Card.Content className='card-content-1'>
-          <i class="fas fa-plus"></i>
+          {show ? (
+           <i class='fas fa-minus' onClick={(event)=>this.Show()}></i>
+          ) : (
+            <i class='fas fa-plus' onClick={(event)=>this.Show()}></i>
+          )}
           <Card.Header className='header'>
              { issue.title }
           </Card.Header>
+          <Link to={{
+              pathname: '/issue/',
+              state: {
+                  IssueId: issue.id 
+              }
+          }} >
           <i class="fas fa-reply"></i>
+          </Link>
           </Card.Content>
-  
-          <Card.Content  className='card-content-2'>
+          <Card.Content  className='card-content-2' style={{display:  this.state.show ? 'block' : 'none'}}>
           <Card.Description className='description'>
             { issue.wiki } 
           </Card.Description>
           </Card.Content>
   
-          <Card.Content extra>
+          <Card.Content extra style={{display:  this.state.show ? 'block' : 'none'}}>
             <h3 ><span className='date'>Date:</span><span className='date-format'>{ issue.upload_time }</span></h3>
           </Card.Content>
-
+        
        </Card>
         );
         return(
@@ -86,7 +120,9 @@ class Home extends Component{
            this.setState({
                type: string
            })
-           this.updateIssue()
+           console.log(string)
+           console.log(this.state.type)
+           this.UpdateIssue(string)
     }
 
     render(){
@@ -95,18 +131,18 @@ class Home extends Component{
             <Header as='h2'>Issues</Header>
             <Divider section />
             <Segment className='segment'>
-               <Button.Group  className='option-1'>
+                  <div className="option-1">
                  <Button color='red' basic>Frontend</Button>
                  <Button color='blue' basic>Backend</Button>
-               </Button.Group>
-               <Divider vertical></Divider>
-               <Button.Group floated='right' className='option-2'>
-                 <Button color='teal' basic onClick={(event)=> this.updateType('latest')}>Latest</Button>
+                 </div>
+               <Divider vertical ></Divider>
+               <div className="option-2">
+                 <Button color='teal' position='right' basic onClick={(event)=> this.updateType('latest')}>Latest</Button>
                  <Button color='blue'basic onClick={(event)=> this.updateType('myissues')}>MyIssues</Button>
                  <Button color='green' basic>Tags</Button>
                  <Button color='violet' basic onClick={(event) => this.updateType('important')}>Important</Button>
-               </Button.Group>
-                </Segment>
+                </div>
+            </Segment>
             <Divider section />
             <Card.Group>
              { this.IssueList() }

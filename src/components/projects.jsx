@@ -75,6 +75,7 @@ class Projects extends Component {
          body: body,
          headers: {
           "Content-type": "application/json; charset=UTF-8",
+          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
          },
        });
        console.log(response);

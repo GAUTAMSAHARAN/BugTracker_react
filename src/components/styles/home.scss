@@ -5,6 +5,9 @@
     margin-top: 40px !important;
     .segment{
         height: 80px !important;
+        display: flex;
+        align-content: center;
+        position: relative !important;
     }
     .option-1{
         margin-top: 8px !important;
@@ -13,7 +16,9 @@
     }
     .option-2{
         margin-top: 8px !important;
-        margin-right: 70px !important;
+        position: absolute;
+        top: 15px;
+        right: 50px;
     }
     Button{
         margin-left: 0 !important;
@@ -26,6 +31,15 @@
         flex-direction: row !important;
         position: relative !important;
         .fa-plus{
+            color: red;
+            font-size: 24px;
+            margin-left: 10px !important;
+            margin-right: 15px !important;
+            &:hover{
+                cursor: pointer;
+            }
+        }
+        .fa-minus{
             color: red;
             font-size: 24px;
             margin-left: 10px !important;
@@ -68,3 +82,4 @@
     height: fit-content !important;
     width: 100% !important;
 }
+
