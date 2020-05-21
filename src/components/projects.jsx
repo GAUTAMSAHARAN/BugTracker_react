@@ -15,6 +15,8 @@ import {
 import "./styles/projects.scss";
 import github from "./images/githubwhite.png";
 import edit from "./images/edit.png";
+import { Link } from 'react-router-dom';
+
 
 class Projects extends Component {
   constructor(props) {
@@ -28,7 +30,8 @@ class Projects extends Component {
         gitlink: '',
         creater: '1',
         memebers: [1],
-      }
+      },
+      up: false, 
     };
   }
 
@@ -81,21 +84,65 @@ class Projects extends Component {
        console.log(response);
   }
 
+  up(){
+    if(this.state.up === false){
+         this.setState({
+            up: true
+         })
+    }
+    if(this.state.up === true){
+         this.setState({
+           up: false
+         })
+    }
+  }
+
   ListProject() {
     let projectLists = this.state.Projects.map((project) => 
       <Card className="project-card">
-        <CardContent className="settings">
+        <Card.Content className='information-box'>
+          <div className="info-box">
+          <div className="editbox">
+            <img src={edit} alt="edit" className="edit" onClick={(event)=>this.up()} />
+          </div>
+          
+          <div className="option-box" style={{display: this.state.up ? 'block' : 'none'}}>
+               <div className="delete">
+               <Modal trigger={<i class="fas fa-trash"></i>} closeIcon>
+                 <Header icon='archive' content='Delete This Issue' />
+                 <Modal.Actions>
+                   <Button color='red'>
+                     <Icon name='remove' /> No
+                   </Button>
+                   <Button color='green' onClick={(event)=> this.deleteProject()}>
+                     <Icon name='checkmark' /> Yes 
+                   </Button>
+                 </Modal.Actions>
+               </Modal>
+          </div>
+
+          <div className="update">
+          <i class="fas fa-pen"></i>
+          </div>
+          </div>
+
           <div className="gitbox">
             <img src={github} alt="gitlink" className="gitlink" />
           </div>
-          <div className="editbox">
-            <img src={edit} alt="edit" className="edit" />
+          <div className="wiki">{project.desc}</div>
           </div>
-          <div className="description">{project.desc}</div>
-        </CardContent>
-        <Card.Content className="info">
-          <Card.Header>{project.title}</Card.Header>
         </Card.Content>
+
+        <Link to={{
+            pathname: '/project/',
+            state: {
+              ProjectId: project.id
+            }
+          }}>
+        <Card.Content className="info">
+          <Card.Header className='project-heading'>{project.title}</Card.Header>
+        </Card.Content>
+        </Link>
         <Card.Content extra>
             <Icon name="user" />
             {project.memebers.length} Members

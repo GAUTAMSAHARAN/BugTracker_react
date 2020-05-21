@@ -9,6 +9,7 @@ import Issue from './issue';
 import Users from './users';
 import GetTokken from './getTokken';
 import LogIn from './login';
+import Profile from './profile';
 
 
 class Router extends Component{
@@ -21,6 +22,7 @@ class Router extends Component{
                 <Route path='/home'component={Home} />
                 <Route exact path='/projects' component={Projects} />
                 <Route exact path='/users' component={Users} />
+                <Route exact path='/user/' component={Profile} />
                 <Route exact path='/project/' component={Project} />
                 <Route exact path='/issue/' component={Issue} />
                 <Route exact path='/getTokken' component={GetTokken}  />

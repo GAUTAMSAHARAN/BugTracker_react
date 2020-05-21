@@ -12,13 +12,16 @@ import {
     Form, 
   } from "semantic-ui-react";
 
+
 class Users extends Component{
     render(){
         return(
+            <React.Fragment>
             <Container className='users-box'>
             <Header as='h2'>Users</Header>
-            <Divider section />         
-            </Container>
+            <Divider section /> 
+            </Container>        
+            </React.Fragment>
         )
     }
 }

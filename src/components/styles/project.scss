@@ -49,6 +49,66 @@
                 cursor: pointer;
             }
             }
+            .delete{
+                height: 40px;
+                width: 40px;
+                position: absolute;
+                top: -50px;
+                right: 20px;
+                background-color: black;
+                display: flex;
+                justify-content: center;
+                border-radius: 10px;
+                &:hover{
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
+                .fa-trash{
+                    color: white;
+                    align-self: center;
+                    font-size: 25px;
+                }
+            }
+            .update{
+                height: 40px;
+                width: 40px;
+                position: absolute;
+                top: -50px;
+                right: 80px;
+                background-color: black;
+                display: flex;
+                justify-content: center;
+                border-radius: 10px;
+                &:hover{
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
+                .fa-pen{
+                    color: white;
+                    align-self: center;
+                    font-size: 25px;
+                }
+            }
+            .add{
+                height: 40px;
+                width: 40px;
+                position: absolute;
+                top: -50px;
+                right: 140px;
+                background-color: black;
+                display: flex;
+                justify-content: center;
+                border-radius: 10px;
+                &:hover{
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }     
+                .fa-plus{
+                    color: white;
+                    align-self: center;
+                    font-size: 25px;
+                }
+            }
         }
     }
     .members{
@@ -66,6 +126,24 @@
         grid-row: 2 !important;
         width: 800px !important;
     }
+    .add{
+        grid-column: 1;
+        grid-row: 2;
+        width: 20%;
+        height: 40px;
+        margin-left: 68%;
+        display: flex;
+        flex-direction: row;
+        justify-content: end;
+        .fa-plus{
+            color: red;
+            font-size: 24px;
+            &:hover{
+                cursor: pointer;
+                transform: scale(1.2);
+            }
+        }
+    }
     .issuelist{
         grid-column: 1 !important;
         grid-row: 3 !important;
@@ -75,6 +153,15 @@
                 flex-direction: row !important;
                 position: relative !important;
                 .fa-plus{
+                    color: red;
+                    font-size: 24px;
+                    margin-left: 10px !important;
+                    margin-right: 15px !important;
+                    &:hover{
+                        cursor: pointer;
+                    }
+                }
+                .fa-minus{
                     color: red;
                     font-size: 24px;
                     margin-left: 10px !important;

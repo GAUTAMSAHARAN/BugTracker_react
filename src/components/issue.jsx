@@ -12,7 +12,10 @@ import {
     Modal,
   } from "semantic-ui-react";
 import edit from './images/edit.png';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
+import Background from './images/options.jpg';
+import moment from 'moment';
+
 
 class Issue extends Component{
 
@@ -20,15 +23,20 @@ class Issue extends Component{
       super(props)
       this.state={
          issue: [],
-         issueId: this.props.location.state,
          IssueComments: [],
+         issueId: this.props.location.state.IssueId,
          open: false,
          values: {
            body: '',
            creater: '1',
            issues: '1',
          },
+         update: [],
          option: false,
+         form: false,
+         active1: 'front',
+         active2: 'pending',
+         comment: {},
       }
     }
 
@@ -38,17 +46,18 @@ class Issue extends Component{
         .then(res => res.json())
         .then(results => {
              this.setState({
-               issue: results
+               issue: results,
+               update: results,
              })
         })
 
-        fetch('http://127.0.0.1:8000/issues/1/comments/')
-         .then(res=>res.json())
-         .then(results=>{
-           this.setState({
-             IssueComments: results
-           })
-         })
+        fetch(`http://127.0.0.1:8000/issues/1/comments/`)
+        .then(res=>res.json())
+        .then(results=>{
+          this.setState({
+            IssueComments: results
+          })
+        })
     }
 
      async createComment(data){
@@ -75,9 +84,25 @@ class Issue extends Component{
         this.createComment(data);
     }
 
+    OpenOption(){
+      if(this.state.option === false){
+        this.setState({
+          option: true
+        })
+      }
+    }
+
+    CloseOption(){
+      if(this.state.option === true){
+            this.setState({
+              option: false
+            })
+      } 
+    }
+
     commentList(){
       let listComments = this.state.IssueComments.map((comment)=>
-            <Card className='issue-comment'>
+            <Card className='issue-comment' key={comment.id} >
             <Card.Content className='comment-body'>
               <Card.Description> 
                 { comment.body }
@@ -85,7 +110,7 @@ class Issue extends Component{
             </Card.Content>
             <Card.Content extra className='extra'>
                 <Icon name='user' className='userimg' />
-    <p className='time'>Time:{ comment.upload_time }</p>
+                 <p className='time'>Time: {moment(comment.upload_time).fromNow()}</p>
                 <p className='name'>Name</p>
                 <p className='member'>Member</p>
             </Card.Content>
@@ -95,42 +120,149 @@ class Issue extends Component{
         listComments
       )
     }
+
+
+    deleteIssue(){
+      const { IssueId } = this.props.location.state.IssueId 
+      fetch(`http://127.0.0.1:8000/issues/${IssueId}/`, {
+       method: 'DELETE',
+       headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+      }
+     })
+     .then(res => res.text()) // or res.json()
+     .then(res => console.log(res))
+  }
     
-    CloseOption(){
-      if(this.state.option === true){
-            this.setState({
-              option: false
-            })
-      } 
+    onUpdate = e => {
+        const { name, value } = e.target
+        this.setState({
+          update: { ...this.state.update, [name]: value }
+        })
     }
 
-    OpenOption(){
-      if(this.state.option === false){
-        this.setState({
-          option: true
-        })
-      }
+   async updateIssue(){
+          let data = JSON.stringify(this.state.update)
+          let IssueId  = this.state.issue.id
+          const response = await fetch(`http://127.0.0.1:8000/issues/${IssueId}/`,{
+            method: 'PUT',
+            body: data,
+            headers: {
+             "Content-type": "application/json; charset=UTF-8",
+             'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+            },
+          });
+          this.setState({
+            issue: this.state.update
+          })
+          this.formClose()
     }
+
+    
+    formOpen(){
+      this.setState({
+        form: true
+      })
+      this.CloseOption()
+    }
+
+    formClose(){
+      this.setState({
+        form: false
+      })
+    }
+
 
     show = (dimmer) => () => this.setState({ dimmer, open: true })
     close = () => this.setState({ open: false })
+    
 
-    deleteIssue(){
-        const { IssueId } = this.props.location.state 
-        fetch(`http://127.0.0.1:8000/issues/${IssueId}/`, {
-         method: 'DELETE',
-         headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
-        }
+    async important(){
+      this.setState({
+        update: { ...this.state.update, important: this.state.update.important ? false : true}
+      })
+      let data = JSON.stringify(this.state.update)
+      let IssueId  = this.state.issue.id
+      const response = await fetch(`http://127.0.0.1:8000/issues/${IssueId}/`,{
+        method: 'PUT',
+        body: data,
+        headers: {
+         "Content-type": "application/json; charset=UTF-8",
+         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+        },
+      });
+      this.setState({
+        issue: this.state.update
+      })
+    }
+
+    async typeUpdate(string){
+       this.setState({
+         update: {...this.state.update, type: string === 'front' ? 'FRONT' : 'BACK'},
        })
-       .then(res => res.text()) // or res.json()
-       .then(res => console.log(res))
+       console.log(this.state.update)
+       if(string === 'front'){
+          this.setState({
+            active1: 'front'
+          })
+       }
+       if(string === 'back'){
+         this.setState({
+           active1: 'back'
+         })
+       }
+       let data = JSON.stringify(this.state.update)
+       let IssueId = this.state.issue.id
+       const response = await fetch(`http://127.0.0.1:8000/issues/${IssueId}/`,{
+        method: 'PUT',
+        body: data,
+        headers: {
+         "Content-type": "application/json; charset=UTF-8",
+         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+        },
+       })
+       this.setState({
+         issue: this.state.update
+       })
     }
-       
-    updateIssue(){
 
+    async statusUpdate(string){
+      switch(string){
+          case "to be discussed":
+             this.setState({
+               update: {...this.state.update, status: "T"},
+               active2: 'to be discussed'
+             })
+             break
+          case "resolved":
+            this.setState({
+              update: {...this.state.update, status: "R"},
+              active2: 'resolved'
+            }) 
+             break
+         default:
+          this.setState({
+            update: {...this.state.update, status: "P"},
+            active2: 'pending'
+          }) 
+             break
+      }
+      let data = JSON.stringify(this.state.update)
+      let IssueId = this.state.issue.id
+      const response = await fetch(`http://127.0.0.1:8000/issues/${IssueId}/`,{
+       method: 'PUT',
+       body: data,
+       headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+       },
+      })
+      this.setState({
+        issue: this.state.update
+      })
     }
+
 
     render(){
         const { open, dimmer } = this.state
@@ -141,6 +273,7 @@ class Issue extends Component{
           <Header as='h2'>Issues</Header>
           <Divider section /> 
           <div className="main-issue-box">
+
           <Card className='issue-head'>
             <Card.Content className='issue-head-header'>
                 <img src={edit} alt='edit'  className='issue-edit' onClick={(event)=> this.OpenOption()} />
@@ -151,13 +284,32 @@ class Issue extends Component{
             </Card.Content>
             <Card.Content className='extra-card' extra>
                 <Icon name='user' />
-                22 comments
+                {this.state.IssueComments.length} comments
                 <div className="time">
                   <Icon name='clock' />
-                  <p>time</p>
+                  <p>{moment(this.state.issue.upload_time).fromNow()}</p>
                 </div>
             </Card.Content>
           </Card>
+
+          <Segment  className='update' style={{display: this.state.form ? 'block' : 'none'}}>
+          <Form className='update-form'> 
+              <Form.Input label='Title' placeholder='Title' name='title' value={this.state.update.title} onChange={this.onUpdate}  /> 
+                 <Form.TextArea label='Wiki' onChange={this.onUpdate} name='wiki' value={this.state.update.wiki}  />
+                 <Button
+                  positive
+                  type='submit'
+                  icon='checkmark'
+                  content="Update"
+                  onClick={(event) => this.updateIssue()}
+                  className='form-submit'
+                  />
+                 <div className='close'>
+                 <i class="fas fa-times" onClick={(event)=> this.formClose()}></i>
+                 </div>
+            </Form>
+            </Segment>
+
           <i class='fas fa-plus' onClick={this.show('blurring')} ></i>
           <Divider className='small-divider' section />
          { this.commentList() }
@@ -197,8 +349,8 @@ class Issue extends Component{
         </Modal>
       </div>
         </Container>
-        
-        <div className='settings' style={{display: this.state.option ? 'block' : 'none'}}>
+
+        <div className='settings' style={{display: this.state.option ? 'block' : 'none',backgroundImage: `url("${Background}")`}}>
        <div className="close"><i class="fas fa-times" onClick={(event)=> this.CloseOption()}></i></div>
           <div className="setting-box">
              <div className="delete">
@@ -213,31 +365,37 @@ class Issue extends Component{
                 </Button>
               </Modal.Actions>
             </Modal>
-             </div>
+             </div> 
              <div className="update">
-             <i class="fas fa-edit" onClick={(evnet)=> this.updateIssue()}></i>
+             <i class="fas fa-edit" onClick={(event)=> this.formOpen()}></i>
              </div>
              <div className="important">
-             <i class="far fa-check-square"></i>
+             <i class="far fa-check-square" onClick={(event)=>this.important()}></i>
              </div>
              <div className="project">
+             <Link to={{
+               pathname: '/project/',
+               state: {
+                 ProjectId: this.state.issue.project
+               }
+             }}>
              <i class="fas fa-arrow-right"></i>
+             </Link>
              </div>
              <div className="line"></div>
           </div>
           <div className="second-box">
             <div className="type">
-                 <Button className='selected'>Frontend</Button>
-                 <Button color='white'>Backend</Button>
+                 <Button color='white' className={this.state.active1 === 'front' ? 'selected' : ''} onClick={(event)=>this.typeUpdate('front')} >Frontend</Button>
+                 <Button color='white' className={this.state.active1 === 'back' ? 'selected' : ''} onClick={(event)=>this.typeUpdate('back')} >Backend</Button>
             </div>
             <div className="status">
-                 <Button className='selected'>pending</Button>
-                 <Button color='white'>hold</Button>
-                 <Button color='white '>to be discussed</Button>
+                 <Button color='white' className={this.state.active2 === 'pending' ? 'selected' : ''} onClick={(event)=>this.statusUpdate('pending')} >pending</Button>
+                 <Button color='white' className={this.state.active2 === 'resolved' ? 'selected' : ''} onClick={(event)=>this.statusUpdate('resolved')} >resolved</Button>
+                 <Button color='white 'className={this.state.active2 === 'to be discussed' ? 'selected' : ''} onClick={(event)=>this.statusUpdate('to be discussed')} >to be discussed</Button>
             </div>
-          </div>
+          </div>    
       </div>
-
         </React.Fragment>
         )
     }
