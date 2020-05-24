@@ -16,6 +16,7 @@ import "./styles/projects.scss";
 import github from "./images/githubwhite.png";
 import edit from "./images/edit.png";
 import { Link } from 'react-router-dom';
+import App from './editor';
 
 
 class Projects extends Component {
@@ -129,7 +130,7 @@ class Projects extends Component {
           <div className="gitbox">
             <img src={github} alt="gitlink" className="gitlink" />
           </div>
-          <div className="wiki">{project.desc}</div>
+          <div className="wiki"><div dangerouslySetInnerHTML={{__html: project.desc}} /></div>
           </div>
         </Card.Content>
 
@@ -177,6 +178,13 @@ class Projects extends Component {
      this.createProject(data);
   }
 
+  handleProjectCreate = (content) => {
+    this.setState({
+        values: {
+          desc: content,
+        }
+    })
+  }
 
   render() {
     const { open, dimmer } = this.state
@@ -210,8 +218,9 @@ class Projects extends Component {
                    <label>Title</label>
                    <input placeholder='Title' name='title' value={this.state.title} onChange={this.onChange} />
                  </Form.Field>
-                 <Form.TextArea label='Descrpition' onChange={this.onChange} name='desc' value={this.state.desc}  placeholder='Write short description about the project  ' />
-                 <Form.Field>
+                 {/* <Form.TextArea label='Descrpition' onChange={this.onChange} name='desc' value={this.state.desc}  placeholder='Write short description about the project  ' /> */}
+                 <App onEditorChange={this.handleProjectCreate} placeholder='write a short description of your project' initialValue='' />
+                 <Form.Field className='link' >
                    <label>Git Link</label>
                    <input placeholder='Git Link' name='gitlink' onChange={this.onChange} value={this.state.gitlink} />
                  </Form.Field>

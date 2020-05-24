@@ -4,47 +4,6 @@
     .main-issue-box{
         width: 900px !important;
         position: relative;
-        .update{
-           position: absolute;
-           height: 220px !important;
-           display: flex;
-           border: 3px solid red;
-           top: -30px !important;
-          .update-form{
-           width: 100% !important;
-           position: relative !important;
-           .form-submit{
-            position: absolute !important;
-            top: -60px !important;
-            right: 10px !important;
-            background-color: red !important;
-            &:hover{
-                transform: scale(1.1);
-                cursor: pointer;
-            }
-        } 
-        .close{
-            height: 36px;
-            width: 36px;
-            border-radius: 5px;
-            background-color: black;
-            position: absolute;
-            top: -60px !important;
-            right: 140px !important;
-            display: flex;
-            .fa-times{
-                font-size: 24px;
-                color: white;
-                margin: auto;
-            }
-            &:hover{
-                transform: scale(1.1);
-                cursor: pointer;
-            }
-        }
-          }
-        }
-
          .fa-plus{
              position: absolute;
              color: red;
@@ -56,6 +15,17 @@
                  transform: scale(1.2);
              }
          }
+         .fa-minus{
+            position: absolute;
+            color: red;
+            font-size: 24px;
+            margin-top: 8px !important;
+            right: 15px !important;
+            &:hover{
+                cursor: pointer;
+                transform: scale(1.2);
+            }
+        }
          .small-divider{
              margin-top: 60px !important;
          }
@@ -83,8 +53,54 @@
                 }   
             }
             .issue-head-header{
-                height: 200px !important;
+                width: inherit;
+                min-height: 200px !important;
+                max-width: 900px !important;
+                height: fit-content !important;
+                position: relative !important;
                 background-color: rgba(255, 0,0, 0.6);
+                padding-bottom: 0 !important;
+                .update{
+                    width: 900px !important;
+                    height: 100% !important;
+                    display: flex;
+                    margin-top: -30px;
+                    border: 3px solid red;
+                    margin-left: -14px !important;
+                   .update-form{
+                    width: 100% !important;
+                    position: relative !important;
+                    .form-submit{
+                     position: absolute !important;
+                     top: -60px !important;
+                     right: 10px !important;
+                     background-color: red !important;
+                     &:hover{
+                         transform: scale(1.1);
+                         cursor: pointer;
+                     }
+                 } 
+                 .close{
+                     height: 36px;
+                     width: 36px;
+                     border-radius: 5px;
+                     background-color: black;
+                     position: absolute;
+                     top: -60px !important;
+                     right: 140px !important;
+                     display: flex;
+                     .fa-times{
+                         font-size: 24px;
+                         color: white;
+                         margin: auto;
+                     }
+                     &:hover{
+                         transform: scale(1.1);
+                         cursor: pointer;
+                     }
+                 }
+                   }
+                 }
             }
             .extra-card{
                 display: flex !important;
@@ -96,6 +112,21 @@
                     right: 100px;
                     display: flex;
                     flex-direction: row;
+                }
+            }
+        }
+        .comment-form{
+            height: fit-content !important;
+             position: relative !important;
+            width: 900px !important;
+            margin-bottom: 20px !important;
+            .create-comment{
+                position: absolute !important;
+                right: 10px;
+                bottom: 10px;
+                background-color: red;
+                &:hover{
+                    transform: scale(1.1);
                 }
             }
         }
@@ -332,3 +363,4 @@
         color: white !important;
     }
 }
+

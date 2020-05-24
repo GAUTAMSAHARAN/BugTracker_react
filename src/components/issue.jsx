@@ -15,6 +15,8 @@ import edit from './images/edit.png';
 import { Link } from 'react-router-dom';
 import Background from './images/options.jpg';
 import moment from 'moment';
+import App from './editor';
+
 
 
 class Issue extends Component{
@@ -24,6 +26,7 @@ class Issue extends Component{
       this.state={
          issue: [],
          IssueComments: [],
+         updateComment: [],
          issueId: this.props.location.state.IssueId,
          open: false,
          values: {
@@ -36,7 +39,10 @@ class Issue extends Component{
          form: false,
          active1: 'front',
          active2: 'pending',
-         comment: {},
+         commentBox: {
+           first: true,
+         },
+         commentForm: false,
       }
     }
 
@@ -55,7 +61,8 @@ class Issue extends Component{
         .then(res=>res.json())
         .then(results=>{
           this.setState({
-            IssueComments: results
+            IssueComments: results,
+            updateComment: results,
           })
         })
     }
@@ -102,10 +109,11 @@ class Issue extends Component{
 
     commentList(){
       let listComments = this.state.IssueComments.map((comment)=>
+      <React.Fragment>
             <Card className='issue-comment' key={comment.id} >
             <Card.Content className='comment-body'>
               <Card.Description> 
-                { comment.body }
+               <div dangerouslySetInnerHTML={{__html: comment.body}} />
              </Card.Description>
             </Card.Content>
             <Card.Content extra className='extra'>
@@ -115,6 +123,7 @@ class Issue extends Component{
                 <p className='member'>Member</p>
             </Card.Content>
           </Card> 
+        </React.Fragment>
       );
       return(
         listComments
@@ -172,11 +181,18 @@ class Issue extends Component{
         form: false
       })
     }
-
-
-    show = (dimmer) => () => this.setState({ dimmer, open: true })
-    close = () => this.setState({ open: false })
     
+    commentFormOpen(){
+      this.setState({
+        commentForm: true, 
+      })
+    }
+
+    commentFormClose(){
+       this.setState({
+         commentForm: false,
+       })
+    }
 
     async important(){
       this.setState({
@@ -263,10 +279,21 @@ class Issue extends Component{
       })
     }
 
+    handleEditorUpdateIssue = (content) => {
+      this.setState({
+        update: {...this.state.update, wiki: content}
+      })
+    }
 
-    render(){
-        const { open, dimmer } = this.state
-         
+    handleCommentCreate = (content) => {
+      this.setState({
+        values: {
+          body: content,
+        } 
+      })
+    }
+     
+    render(){         
         return(
           <React.Fragment>
           <Container className='issue-box'>
@@ -277,25 +304,16 @@ class Issue extends Component{
           <Card className='issue-head'>
             <Card.Content className='issue-head-header'>
                 <img src={edit} alt='edit'  className='issue-edit' onClick={(event)=> this.OpenOption()} />
-         <Card.Header>{ this.state.issue.title }</Card.Header>
-              <Card.Description>
-                  { this.state.issue.wiki }
+         <Card.Header style={{display: this.state.form ? 'none' : 'block'}} >{ this.state.issue.title }</Card.Header>
+              <Card.Description style={{display: this.state.form ? 'none' : 'block'}} >
+                <div dangerouslySetInnerHTML={{__html: this.state.issue.wiki}} />
               </Card.Description>
-            </Card.Content>
-            <Card.Content className='extra-card' extra>
-                <Icon name='user' />
-                {this.state.IssueComments.length} comments
-                <div className="time">
-                  <Icon name='clock' />
-                  <p>{moment(this.state.issue.upload_time).fromNow()}</p>
-                </div>
-            </Card.Content>
-          </Card>
 
-          <Segment  className='update' style={{display: this.state.form ? 'block' : 'none'}}>
+              <Segment  className='update' style={{display: this.state.form ? 'block' : 'none'}}>
           <Form className='update-form'> 
               <Form.Input label='Title' placeholder='Title' name='title' value={this.state.update.title} onChange={this.onUpdate}  /> 
-                 <Form.TextArea label='Wiki' onChange={this.onUpdate} name='wiki' value={this.state.update.wiki}  />
+                 {/* <Form.TextArea label='Wiki' onChange={this.onUpdate} name='wiki' value={this.state.update.wiki}  /> */}
+                 <App onEditorChange={this.handleEditorUpdateIssue} initialValue={this.state.issue.wiki} />
                  <Button
                   positive
                   type='submit'
@@ -310,44 +328,36 @@ class Issue extends Component{
             </Form>
             </Segment>
 
-          <i class='fas fa-plus' onClick={this.show('blurring')} ></i>
+            </Card.Content>
+            <Card.Content className='extra-card' extra>
+                <Icon name='user' />
+                {this.state.IssueComments.length} comments
+                <div className="time">
+                  <Icon name='clock' />
+                  <p>{moment(this.state.issue.upload_time).fromNow()}</p>
+                </div>
+            </Card.Content>
+          </Card>
+
+          <i class='fas fa-plus' onClick={(event)=>this.commentFormOpen()}  style={{display: this.state.commentForm ? 'none' : 'block'}} ></i>
+          <i class='fas fa-minus' onClick={(event)=>this.commentFormClose()} style={{display: this.state.commentForm ? 'block' : 'none'}} ></i>
           <Divider className='small-divider' section />
-         { this.commentList() }
-          </div>
-
-          <div>
-        <Modal dimmer={dimmer} open={open} onClose={this.close}>
-          <Modal.Header>Write a Comment</Modal.Header>
-          <Modal.Content image>
-            <Modal.Description>
-
-            <Form> 
-               <Form.TextArea label='Descrpition' onChange={this.onChange} name='body' value={this.state.body}  placeholder='Write a Comment if you have a  solution for the issue' />
+          <Card className='comment-form' style={{display: this.state.commentForm ? 'block' : 'none'}}>
+          <Form> 
+               {/* <Form.TextArea label='Descrpition' onChange={this.onChange} name='body' value={this.state.body}  placeholder='Write a Comment if you have a  solution for the issue' /> */}
+               <App onEditorChange={this.handleCommentCreate} placeholder='Write your answer' initialValue='' />
                <Button
                 positive
                 type='submit'
                 icon='checkmark'
-                content="Create"
+                content="create"
+                className='create-comment'
                 onClick={(event) => this.onSubmit()}
                 />
-             </Form>
-
-            </Modal.Description>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button color='black' onClick={this.close}>
-              Nope
-            </Button>
-            <Button
-              positive
-              icon='checkmark'
-              labelPosition='right'
-              content="Yep, that's me"
-              onClick={this.close}
-            />
-          </Modal.Actions>  
-        </Modal>
-      </div>
+          </Form>
+          </Card>
+         { this.commentList() }
+          </div>
         </Container>
 
         <div className='settings' style={{display: this.state.option ? 'block' : 'none',backgroundImage: `url("${Background}")`}}>

@@ -19,10 +19,56 @@
     display: grid;
     grid-template-columns: 80% 20%;
     grid-template-rows: 20% 2% 88%;
-    .card{
+    .project-form{
         width: 800px !important;
         grid-column: 1 !important;
         grid-row: 1 !important;
+        display: flex;
+        height: fit-content !important;
+        border: 3px solid red;
+        margin-top: -10px !important;
+        .update-project{
+            position: absolute;
+            top: -60px;  
+            right: 20px;
+            background-color: red;
+        }
+        .close-box{
+            position: absolute;
+            top: -60px;  
+            right: 140px;
+            background-color: black;   
+            height: 36px;
+            width: 36px;
+            border-radius: 5px;
+            display: flex;
+            .fa-times{
+                color: white;
+                margin: auto;
+                font-size: 24px;
+            }  
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+        }
+    }
+    .card{
+        width: 800px !important;
+        height: fit-content !important;
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        .project-extra{
+            display: flex;
+            flex-direction: row;
+            position: relative;
+            .time{
+                justify-content: flex-end;
+                position: absolute;
+                right: 20px;
+                display: flex;
+            }
+        }
         .info{
             height: 250px !important;
             position: relative;
@@ -200,4 +246,9 @@
 .date-format{
     font-size: 14px;
     margin-left: 10px;
+}
+
+
+.inline-options{
+    margin-top: 10px !important;
 }

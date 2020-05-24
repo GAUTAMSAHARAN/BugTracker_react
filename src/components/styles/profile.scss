@@ -88,6 +88,49 @@
         }
     }
 }
-.form-segmant{
-    height: 200px !important;
+.form-segment{
+    position: relative;
+    height: fit-content !important;
+    float: left;
+    .email-submit{
+        position: absolute;
+        top: -60px;
+        right: 10px;
+        background-color: red !important;
+        &:hover{
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    }
+    .password-submit{
+        position: absolute;
+        top: -60px;
+        right: 10px;
+        background-color: red !important;
+        &:hover{
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    }
+        .username-submit{
+            position: absolute;
+            top: -60px;
+            right: 10px;
+            background-color: red !important;
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+    }
+    .social-submit{
+        position: absolute;
+        top: -60px;
+        right: 10px;
+        background-color: red !important;
+        &:hover{
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+}
+
 }
