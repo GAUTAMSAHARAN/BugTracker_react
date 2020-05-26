@@ -6,6 +6,8 @@
     height: 43px !important;
     padding-left: 25px !important;
     padding-right: 25px !important;
+    grid-column: 1/span 2;
+    grid-row: 1/2;
     #search{
         background-color: #fff !important;
         opacity: 0.3 !important;

@@ -12,6 +12,8 @@ import {
   Form,
 } from "semantic-ui-react";
 import edit from "./images/edit.png";
+import Avatar from 'react-avatar';
+
 
 class Profile extends Component {
   constructor(props) {
@@ -31,7 +33,9 @@ class Profile extends Component {
   }
 
   componentDidMount(){
-    fetch('http://127.0.0.1:8000/users/1/')
+    const { userId } = this.props.location.state
+    console.log(userId);
+    fetch(`http://127.0.0.1:8000/users/${userId}/`)
      .then(res=>res.json())
      .then(results=>{
        this.setState({
@@ -100,8 +104,9 @@ class Profile extends Component {
 
   async updateEmail(){
     let data = JSON.stringify(this.state.update)
+    let UserId  = this.props.location.state.userId
     if(this.state.update.email === this.state.emailConfirmation){
-        const response = await fetch(`http://127.0.0.1:8000/users/1/`,{
+        const response = await fetch(`http://127.0.0.1:8000/users/${UserId}/`,{
           method: 'PUT',
           body: data,
           headers: {
@@ -163,7 +168,9 @@ class Profile extends Component {
         <Header as="h2">Profile</Header>
         <Divider section />
         <Segment className="info">
-          <div className="picture"></div>
+          <div className="picture">
+            <Avatar className='avatar' name={this.state.profile.username} />
+          </div>
           <Card className="username">
             <Card.Content>
               <Card.Header>Username</Card.Header>

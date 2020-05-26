@@ -9,6 +9,8 @@
     border: 0 !important;
     float: left !important;
     position: relative !important;
+    grid-row: 2/span 1;
+    grid-column: 1/2;
     .workplace{
         font-size: 20px !important;
         border-bottom  : 2px solid #f1f1f1 !important;

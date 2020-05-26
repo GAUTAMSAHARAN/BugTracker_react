@@ -1,6 +1,40 @@
-.users-box{
-    position: relative   !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    margin-top: 40px !important;
-}
+        .box{
+        display: flex;
+        flex-direction: row;
+        .left-card-box{
+            flex: 1;
+            padding-left: 60px;
+        }
+        .right-card-box{
+            flex: 1;
+            padding-left: 60px;
+       }
+    }
+    .user-card{
+        height: 300px !important;
+        width: 400px !important;
+        .links{
+            position: absolute;
+            top: 30px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-content: space-evenly;
+        }
+        .avatar-box{
+            width: 400px !important;
+            height: 200px !important;
+            .avatar{
+                width: 100% !important  ;
+                height: 100% !important;
+            }
+        }
+    }
+
+    .fa-id-card{
+        position: absolute;
+        right: 20px;
+        font-size: 30px;
+        top: 240px;
+        color: black;
+    }
