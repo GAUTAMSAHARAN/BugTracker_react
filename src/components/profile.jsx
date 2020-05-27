@@ -35,7 +35,7 @@ class Profile extends Component {
   componentDidMount(){
     const { userId } = this.props.location.state
     console.log(userId);
-    fetch(`http://127.0.0.1:8000/users/${userId}/`)
+    fetch(`http://127.0.0.1:8000/users/1/`)
      .then(res=>res.json())
      .then(results=>{
        this.setState({

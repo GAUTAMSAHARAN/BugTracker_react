@@ -14,7 +14,7 @@ class Users extends Component{
            usersRight: [],
        }
     }
-    
+
     componentDidMount(){
         fetch('http://127.0.0.1:8000/users/')
          .then(res=>res.json())
@@ -45,21 +45,21 @@ class Users extends Component{
           </div>
         </Card.Content>
         <Card.Content>
-    <Card.Header>{user.username}</Card.Header>
+        <Card.Header>{user.username}</Card.Header>
         <Link to={{
             pathname: '/user/',
             state: {
-              userId: user.id
+              UserId: user.id
             }
           }}>
         <i class="fas fa-id-card"></i>
         </Link>
           <Card.Description>
-            {user.email}           
+            {user.email}
           </Card.Description>
         </Card.Content>
       </Card>
-      </React.Fragment>
+        </React.Fragment>
         );
         return(
             userList
@@ -84,13 +84,13 @@ class Users extends Component{
         <Link to={{
             pathname: '/user/',
             state: {
-              userId: user.id
+              UserId: user.id
             }
           }}>
         <i class="fas fa-id-card"></i>
         </Link>
           <Card.Description>
-            {user.email}           
+            {user.email}
           </Card.Description>
         </Card.Content>
       </Card>
@@ -98,13 +98,13 @@ class Users extends Component{
         );
         return(
             userList
-        )  
+        )
     }
 
     render(){
-        return(  
+        return(
           <React.Fragment>
-            
+
             <Container className='home-box'>
             <Header as='h2'>Users</Header>
             <Divider section />

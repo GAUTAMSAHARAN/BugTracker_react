@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import './styles/project.scss';
 import {
     Container,
@@ -10,16 +11,56 @@ import {
     Icon,
     Image,
     Modal,
-    List,
+    Dropdown,
     Form,
-    Radio,
+    Radio,  
     Checkbox,
+    Search,
+    Grid,
+    List
   } from "semantic-ui-react";
 import github from "./images/githubwhite.png";
 import edit from "./images/edit.png";
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import App from './editor';
+import Avatar from 'react-avatar';
+
+class MemberCard extends Component{
+  render(){
+    const{ member, deleteMemberId } = this.props
+    return(
+       <React.Fragment>
+            <List.Item className='list-item'>
+                <Avatar className=' avatar image' name={member.username} />
+                <div className="delete" style={{display: this.props.delete ? 'block' : 'none'}} onClick={(evnet) => deleteMemberId(member.id)}>
+                <i class="fas fa-trash"></i>
+                </div>
+                <span className='name'>{member.username}</span>
+            </List.Item>
+       </React.Fragment>
+    )
+  }
+}
+
+
+class UserCard extends Component{
+  render(){
+    const {user, onClick } = this.props
+    return(
+          <React.Fragment>
+                   <Card key={user.id} className='card-box' onClick={(event) =>onClick(user.id)}>
+                     <Card.Content>
+                       <Card.Description>
+                         <Avatar name={user.username} className='avatar' />
+                         <span className='name'>{user.username}</span>
+                       </Card.Description>
+                     </Card.Content>
+                   </Card>
+          </React.Fragment>
+    )
+  }
+}
 
 
 
@@ -29,6 +70,8 @@ class Project extends Component{
         super(props)
         this.state={
              project: [],
+             members: [],
+             users: [],
              ProjectId: this.props.location.state.ProjectId,
              projectIssues: [],
              teamMembers: [],
@@ -46,6 +89,7 @@ class Project extends Component{
              },
              up: false,
              form: false,
+             deleteMember: false,
         }
         this.Show = this.Show.bind(this)
     }
@@ -58,6 +102,7 @@ class Project extends Component{
          this.setState({
            project: results,
            update: results,
+           members: results.memebers,
          })
        })
 
@@ -76,6 +121,14 @@ class Project extends Component{
              teamMembers: results,
            })
          })
+
+        fetch('http://127.0.0.1:8000/users/')
+        .then(res => res.json())
+        .then(results => {
+          this.setState({
+            users: results
+          })
+        })
     }
 
     Show(){
@@ -135,8 +188,7 @@ class Project extends Component{
 
 
     deleteProject(){
-      const { ProjectId } = this.props.location.state.ProjectId
-      fetch(`http://127.0.0.1:8000/projects/${ProjectId}/`,{
+      fetch(`http://127.0.0.1:8000/projects/${this.state.project.id}/`,{
         method: 'DELETE',
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -226,9 +278,8 @@ class Project extends Component{
     }
 
     updateProject(){
-      const { ProjectId } = this.props.location.state.ProjectId
       let data = JSON.stringify(this.state.update)
-      let response = fetch(`http://127.0.0.1:8000/projects/${ProjectId}/`,{
+      let response = fetch(`http://127.0.0.1:8000/projects/${this.state.project.id}/`,{
         method: 'PUT',
         body: data,
         headers: {
@@ -256,7 +307,99 @@ class Project extends Component{
       })
     }
 
+     
+    useroptions(){
+      const UserOptions = this.state.users.map((user) => ({
+        key: user.id,
+        name: user.username
+      }));
+      return(
+        UserOptions
+      )
+    }
+    
+    submitNewMembers(){
+      let data = JSON.stringify(this.state.project)
+      let response = fetch(`http://127.0.0.1:8000/projects/${this.state.project.id}/`,{
+        method: 'PUT',
+        body: data,
+        headers: {
+         "Content-type": "application/json; charset=UTF-8",
+         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+        },
+      })
+      console.log(this.state.project)
+    }
 
+    handleCardClick = (id) => {
+        this.setState({
+          project: {...this.state.project, memebers: this.state.project.memebers.push(id)},
+        })
+        this.submitNewMembers()
+    }
+
+    listUser() {
+      let userlist = []
+      let resultUsers = this.state.users.filter((user)=>{
+        return  !(this.state.members.indexOf(user.id)>=0)
+        })
+      if (resultUsers.length !== 0) {
+        userlist = resultUsers.map((user)=>
+        <UserCard user={user} onClick={this.handleCardClick} />
+     );
+        }
+        else {
+            userlist = <span>users are not available</span>
+        }
+      return(
+        userlist
+      ) 
+    } 
+
+    deletePermanent(){
+      let data = JSON.stringify(this.state.project)
+      let response = fetch(`http://127.0.0.1:8000/projects/${this.state.project.id}/`,{
+        method: 'PUT',
+        body: data,
+        headers: {
+         "Content-type": "application/json; charset=UTF-8",
+         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+        },
+      })
+      console.log(this.state.project)
+    }
+
+    deleteMemberId = (id) => {
+      this.setState({
+        project: {...this.state.project, memebers: this.state.project.memebers.filter((Id)=>{
+                 return (Id !== id)
+        })}
+      })
+      this.deletePermanent()
+  }
+
+    listmember(){
+       let  memberList = this.state.teamMembers.map((member) =>
+             <MemberCard member={member} delete={this.state.deleteMember} deleteMemberId = {this.deleteMemberId} />
+      )      
+      return(
+        memberList
+      )
+    }
+
+    deleteOpen(){
+      this.setState({
+         deleteMember: true,
+      })
+    }
+
+    deleteClose(){
+      this.setState({
+        deleteMember: false,
+      })
+    }
+ 
+ 
     render(){
       const { open, dimmer, value } = this.state
 
@@ -291,8 +434,13 @@ class Project extends Component{
                <div className="update">
                <i class="fas fa-pen" onClick={(event)=> this.openForm()}></i>
                </div>
-               <div className="add">
-               <i class="fas fa-plus"></i>
+               <div className='add'>
+               <Modal trigger={<i class="fas fa-plus" ></i>}>
+                 <Modal.Header>Add Members in project</Modal.Header>
+                 <Modal.Content className='member-modal-content'>
+                   {this.listUser()}
+                 </Modal.Content>
+               </Modal>
                </div>
                </div>
              </Card.Content>
@@ -330,6 +478,19 @@ class Project extends Component{
          <div className="add">
          <i class="fas fa-plus" onClick={this.show('blurring')} ></i>
          </div>
+
+         <Card className='members'>
+          <Card.Content>
+            <Card.Header>Members</Card.Header>
+            <i class="fas fa-pen" style={{display: this.state.deleteMember ? 'none' : 'block'}} onClick={ (event)=> this.deleteOpen() }></i>
+            <i class="fas fa-times" style={{display: this.state.deleteMember ? 'block' : 'none'}} onClick={ (event)=> this.deleteClose()   }></i>
+          </Card.Content>
+          <Card.Content className='user-list'>
+          <List selection verticalAlign='middle'>
+              {this.listmember()}
+          </List>
+          </Card.Content>
+         </Card>
 
          <Divider section className='divider' />
 

@@ -19,6 +19,67 @@
     display: grid;
     grid-template-columns: 80% 20%;
     grid-template-rows: 20% 2% 88%;
+    .members{
+        grid-column: 2/span 1;
+        grid-row: 1/span 2;
+        .fa-pen{
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 20px;
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+        }
+        .fa-times{
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 20px;
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+        }
+        .list-item{
+            position: relative !important;
+            .delete{
+                position: absolute;
+                background-color: red;
+                width: 40px;
+                height: 40px;
+                top: 8px;
+                &:hover{
+                    transform: scale(1.05);
+                    cursor: pointer;
+                }
+                .fa-trash{
+                    color: white;
+                    font-size: 18px;
+                    position: relative;
+                    margin-top: 12px;
+                    margin-left: 12px;
+                }
+            }
+        }
+        .user-list{
+            min-height: 80px;
+            max-height: 300px;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            .avatar{
+                width: 40px !important;
+                height: 40px !important;
+            }
+            .name{
+              font-weight: bolder !important;
+              font-size: 18px;
+              margin-left: 10px;
+              color: black;
+            }
+        }
+    }
     .project-form{
         width: 800px !important;
         grid-column: 1 !important;
@@ -251,4 +312,32 @@
 
 .inline-options{
     margin-top: 10px !important;
+}
+
+
+.member-modal-content{
+    overflow-y: scroll !important;
+    scrollbar-width: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-evenly !important;
+}
+.card-box{
+    position: relative !important;
+    margin: 0 !important;
+    &:hover{
+        transform: scale(1.05);
+        cursor: pointer;
+    }
+    .avatar{
+        width: 60px !important;
+        height: 60px !important;
+    }
+    .name{
+        position: absolute;
+        font-size: 18px;
+        font-weight: bolder;
+        left: 100px; 
+        top: 38px;   
+    }
 }
