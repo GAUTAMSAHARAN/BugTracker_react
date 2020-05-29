@@ -12,6 +12,7 @@ import LogIn from './login';
 import Profile from './profile';
 import { Container } from 'semantic-ui-react';
 import './styles/grid.scss';
+import MyPage from './mypage';
 
 
 class Router extends Component{
@@ -30,6 +31,7 @@ class Router extends Component{
                 <Route exact path='/issue/' component={Issue} />
                 <Route exact path='/getTokken' component={GetTokken}  />
                 <Route path='/login/' component={LogIn} />
+                <Route path='/mypage/' component={MyPage} />
             </Switch>
             </div>
             </BrowserRouter>

@@ -130,42 +130,80 @@
                 }
             }
         }
-        .issue-comment{
+
+    }
+}
+.issue-comment{
+    width: 900px !important;
+    border-bottom: 1px solid #FFF4D1;
+    .comment-body{
+        height: fit-content !important;
+        background-color: #FFF4D1 !important;
+        .update-comment-form{
+            height: 100% !important;
             width: 900px !important;
-            border-bottom: 1px solid #FFF4D1;
-            .comment-body{
-                height: fit-content !important;
-                background-color: #FFF4D1 !important;
+            margin-left: -14px;
+            margin-bottom: -20px;
+            border: 3px solid red;
+        }
+        .update-comment{
+            position: absolute !important;
+            right: 10px;
+            bottom: 10px;
+            background-color: red;
+        }
+    }
+    .extra{
+        height: 80px !important;
+        position: relative !important;
+        .fa-pen{
+            color: darkblue;
+            font-size: 20px;
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
             }
-            .extra{
-                height: 80px !important;
-                position: relative;
-                .userimg{
-                    position: absolute !important;
-                    right: 130px !important;
-                    top: 30px !important;
-                    font-size: 30px !important;
-                    color: black !important;
-                }
-                .member{
-                    position: absolute;
-                    right: 65px;
-                    top: 40px;
-                }
-                .name{
-                    position: absolute;
-                    right: 80px;
-                    top: 15px;
-                }
-                .time{
-                    position: absolute;
-                    bottom: 5px;
-                }
+        }
+        .fa-times{
+            color: darkblue;
+            font-size: 20px;
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
             }
+        }
+        .fa-trash{
+            color: orange;
+            font-size: 20px;
+            margin-left: 20px;
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+        }
+        .userimg{
+            position: absolute !important;
+            right: 130px !important;
+            top: 30px !important;
+            font-size: 30px !important;
+            color: black !important;
+        }
+        .member{
+            position: absolute;
+            right: 65px;
+            top: 40px;
+        }
+        .name{
+            position: absolute;
+            right: 80px;
+            top: 15px;
+        }
+        .time{
+            position: absolute;
+            bottom: 5px;
         }
     }
 }
-
 
 .settings{
     position: absolute !important;

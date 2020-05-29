@@ -18,6 +18,64 @@ import moment from 'moment';
 import App from './editor';
 
 
+class CommentCard extends Component{
+ 
+  constructor(props){
+    super(props)
+    this.state={
+      form: false,
+    }
+  }
+
+  openForm(){
+    this.setState({
+      form: true,
+    })
+  }
+
+  closeForm(){
+    this.setState({
+      form: false,
+    })
+  }
+
+  render(){
+    const {comment} = this.props
+    return(
+      <Card className='issue-comment' key={comment.id} >
+      <Card.Content className='comment-body'>
+        <Card.Description style={{display: this.state.form ? 'none' : 'block'}}> 
+         <div dangerouslySetInnerHTML={{__html: comment.body}} />
+       </Card.Description>
+       <Segment className='update-comment-form' style={{display: this.state.form ? 'block' : 'none'}}>
+       <Form> 
+               {/* <Form.TextArea label='Descrpition' onChange={this.onChange} name='body' value={this.state.body}  placeholder='Write a Comment if you have a  solution for the issue' /> */}
+               <App onEditorChange={this.handleCommentCreate} placeholder='Write your answer' initialValue='' />
+               <Button
+                positive
+                type='submit'
+                icon='checkmark'
+                content="update"
+                className='update-comment'
+                onClick={(event) => this.onSubmit()}
+                />
+          </Form>
+      </Segment>
+      </Card.Content>
+      <Card.Content extra className='extra'>
+          <i class="fas fa-pen" style={{display: this.state.form ? 'none' : 'inline'}} onClick={(event) => this.openForm()}></i>
+          <i class="fas fa-times" style={{display: this.state.form ? 'inline' : 'none'}} onClick={(event) => this.closeForm()}></i>
+          <i class="fas fa-trash"></i>
+          <Icon name='user' className='userimg' />
+           <p className='time'>Time: {moment(comment.upload_time).fromNow()}</p>
+          <p className='name'>Name</p>
+          <p className='member'>Member</p>
+      </Card.Content>
+    </Card>
+    )
+  }
+}
+
 
 class Issue extends Component{
 
@@ -110,19 +168,7 @@ class Issue extends Component{
     commentList(){
       let listComments = this.state.IssueComments.map((comment)=>
       <React.Fragment>
-            <Card className='issue-comment' key={comment.id} >
-            <Card.Content className='comment-body'>
-              <Card.Description> 
-               <div dangerouslySetInnerHTML={{__html: comment.body}} />
-             </Card.Description>
-            </Card.Content>
-            <Card.Content extra className='extra'>
-                <Icon name='user' className='userimg' />
-                 <p className='time'>Time: {moment(comment.upload_time).fromNow()}</p>
-                <p className='name'>Name</p>
-                <p className='member'>Member</p>
-            </Card.Content>
-          </Card> 
+         <CommentCard comment={comment} />
         </React.Fragment>
       );
       return(
@@ -411,4 +457,5 @@ class Issue extends Component{
     }
 }
 
-export default Issue;
+export { CommentCard }
+export default Issue

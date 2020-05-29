@@ -25,7 +25,8 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import App from './editor';
 import Avatar from 'react-avatar';
-
+import { IssueCard } from './home';
+ 
 class MemberCard extends Component{
   render(){
     const{ member, deleteMemberId } = this.props
@@ -147,39 +148,7 @@ class Project extends Component{
     IssueList(){
        let show = this.state.show
        let issueList = this.state.projectIssues.map((issue)=>
-            <Card fluid color='red' className="issue" key={issue.id}>
-              
-            <Card.Content className='card-content-1'>
-              {show ? (
-                 <i class="fas fa-minus" onClick={(event)=> this.Show()} ></i>
-               ) : (
-                <i class="fas fa-plus" onClick={(event)=> this.Show()} ></i>
-               )
-              }
-            <Card.Header className='header'>
-               {issue.title}
-            </Card.Header>
-            <Link to={{
-              pathname: '/issue/',
-              state: {
-                IssueId: issue.id
-              }
-            }}>
-            <i class="fas fa-reply"></i>
-            </Link>
-            </Card.Content>
-     
-            <Card.Content  className='card-content-2' style={{display: this.state.show ? 'block' : 'none' }} >
-            <Card.Description className='description'>
-              <div dangerouslySetInnerHTML={{__html: issue.wiki}} />
-            </Card.Description>
-            </Card.Content>
-              
-            <Card.Content extra style={{display: this.state.show ? 'block' : 'none'}} >
-    <h3 ><span className='date'>Date</span><span className='date-format'>{moment(issue.upload_time).fromNow()}</span></h3>
-            </Card.Content>
-     
-           </Card>
+            <IssueCard issue={issue} />
        );
        return(
          issueList

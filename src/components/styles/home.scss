@@ -23,43 +23,43 @@
     Button{
         margin-left: 0 !important;
     }
-    .issue{
-        width: 100% !important;
+}
+.issue{
+    width: 100% !important;
+}
+.card-content-1{
+    display: flex !important;
+    flex-direction: row !important;
+    position: relative !important;
+    .fa-plus{
+        color: red;
+        font-size: 24px;
+        margin-left: 10px !important;
+        margin-right: 15px !important;
+        &:hover{
+            cursor: pointer;
+        }
     }
-    .card-content-1{
-        display: flex !important;
-        flex-direction: row !important;
-        position: relative !important;
-        .fa-plus{
-            color: red;
-            font-size: 24px;
-            margin-left: 10px !important;
-            margin-right: 15px !important;
-            &:hover{
-                cursor: pointer;
-            }
+    .fa-minus{
+        color: red;
+        font-size: 24px;
+        margin-left: 10px !important;
+        margin-right: 15px !important;
+        &:hover{
+            cursor: pointer;
         }
-        .fa-minus{
-            color: red;
-            font-size: 24px;
-            margin-left: 10px !important;
-            margin-right: 15px !important;
-            &:hover{
-                cursor: pointer;
-            }
-        }
-        .header{
-            font-size: 14px !important;
-            font-weight: bold !important;
-        }
-        .fa-reply{
-            color: red;
-            font-size: 24px;
-            position: absolute;
-            right: 15px;
-            &:hover{
-                cursor: pointer;
-            }
+    }
+    .header{
+        font-size: 14px !important;
+        font-weight: bold !important;
+    }
+    .fa-reply{
+        color: red;
+        font-size: 24px;
+        position: absolute;
+        right: 15px;
+        &:hover{
+            cursor: pointer;
         }
     }
 }

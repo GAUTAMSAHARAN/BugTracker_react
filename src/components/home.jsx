@@ -3,6 +3,68 @@ import './styles/home.scss';
 import { Container, Header, Divider, Button, Segment, Card, CardContent } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
+class IssueCard extends Component{
+    constructor(props){
+        super(props)
+        this.state={
+            show: false,
+        }
+        this.Show = this.Show.bind(this)
+
+    }
+
+    Show(){
+        if(this.state.show === false){
+            this.setState({
+                show: true
+            })
+        }
+        if(this.state.show === true){
+            this.setState({
+               show: false
+            })
+        }
+    }
+
+    render(){
+        const {issue} = this.props
+        const {show} = this.state
+        return(
+            <Card fluid color='red' className="issue" key={issue.id}>
+         
+            <Card.Content className='card-content-1'>
+            {show ? (
+             <i class='fas fa-minus' onClick={(event)=>this.Show()}></i>
+            ) : (
+              <i class='fas fa-plus' onClick={(event)=>this.Show()}></i>
+            )}
+            <Card.Header className='header'>
+               { issue.title }
+            </Card.Header>
+            <Link to={{
+                pathname: '/issue/',
+                state: {
+                    IssueId: issue.id 
+                }
+            }} >
+            <i class="fas fa-reply"></i>
+            </Link>
+            </Card.Content>
+            <Card.Content  className='card-content-2' style={{display:  this.state.show ? 'block' : 'none'}}>
+            <Card.Description className='description'>
+              { issue.wiki } 
+            </Card.Description>
+            </Card.Content>
+    
+            <Card.Content extra style={{display:  this.state.show ? 'block' : 'none'}}>
+              <h3 ><span className='date'>Date:</span><span className='date-format'>{ issue.upload_time }</span></h3>
+            </Card.Content>
+          
+         </Card>
+        )
+    }
+}
+
 
 class Home extends Component{
       
@@ -13,11 +75,9 @@ class Home extends Component{
             issues: [],
             type: 'latest',
             IsloggedIn: sessionStorage.getItem('IsLoggedIn'),
-            show: false
         }
 
         this.UpdateIssue = this.UpdateIssue.bind(this)
-        this.Show = this.Show.bind(this)
     }
      
     componentDidMount(){
@@ -61,54 +121,10 @@ class Home extends Component{
 
          })
     }
-    
-    Show(){
-        if(this.state.show === false){
-            this.setState({
-                show: true
-            })
-        }
-        if(this.state.show === true){
-            this.setState({
-               show: false
-            })
-        }
-    }
 
     IssueList() {
-          let show =  this.state.show
           let listIssues = this.state.issues.map((issue) => 
-          <Card fluid color='red' className="issue" key={issue.id}>
-         
-          <Card.Content className='card-content-1'>
-          {show ? (
-           <i class='fas fa-minus' onClick={(event)=>this.Show()}></i>
-          ) : (
-            <i class='fas fa-plus' onClick={(event)=>this.Show()}></i>
-          )}
-          <Card.Header className='header'>
-             { issue.title }
-          </Card.Header>
-          <Link to={{
-              pathname: '/issue/',
-              state: {
-                  IssueId: issue.id 
-              }
-          }} >
-          <i class="fas fa-reply"></i>
-          </Link>
-          </Card.Content>
-          <Card.Content  className='card-content-2' style={{display:  this.state.show ? 'block' : 'none'}}>
-          <Card.Description className='description'>
-            { issue.wiki } 
-          </Card.Description>
-          </Card.Content>
-  
-          <Card.Content extra style={{display:  this.state.show ? 'block' : 'none'}}>
-            <h3 ><span className='date'>Date:</span><span className='date-format'>{ issue.upload_time }</span></h3>
-          </Card.Content>
-        
-       </Card>
+           <IssueCard issue={issue} />
         );
         return(
             listIssues
@@ -152,6 +168,7 @@ class Home extends Component{
     }
 }
 
+export { IssueCard }
 export default Home;
 
 

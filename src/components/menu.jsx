@@ -38,8 +38,9 @@ class MenuTab extends Component{
               onClick={this.handleItemClick}
             />
             <Menu.Item 
-              name='Comments'
-              active={activeItem === 'Comments'}
+              to='/mypage/'
+              name='MyPage'
+              active={activeItem === 'MyPage'}
               onClick={this.handleItemClick}
             />
             <Menu.Item
