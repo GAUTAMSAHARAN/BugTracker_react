@@ -11,8 +11,9 @@ import GetTokken from './getTokken';
 import LogIn from './login';
 import Profile from './profile';
 import { Container } from 'semantic-ui-react';
-import './styles/grid.scss';
 import MyPage from './mypage';
+import './styles/grid.scss';
+import ROUTES, { RenderRoutes } from "./routes";
 
 
 class Router extends Component{
@@ -22,7 +23,7 @@ class Router extends Component{
             <div className='grid'>
             <Navbar />
             <MenuTab />
-            <Switch>
+            {/* <Switch>
                 <Route path='/home'component={Home} />
                 <Route exact path='/projects' component={Projects} />
                 <Route exact path='/users' component={Users} />
@@ -32,7 +33,8 @@ class Router extends Component{
                 <Route exact path='/getTokken' component={GetTokken}  />
                 <Route path='/login/' component={LogIn} />
                 <Route path='/mypage/' component={MyPage} />
-            </Switch>
+            </Switch> */}
+            <RenderRoutes routes={ROUTES} />
             </div>
             </BrowserRouter>
         )

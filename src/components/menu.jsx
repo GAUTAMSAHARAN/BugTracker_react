@@ -22,40 +22,52 @@ class MenuTab extends Component{
         return(
           <React.Fragment>
             <Menu pointing secondary vertical className='side-menu'>
-            <Menu.Item as={Link}
-              to='/'
+
+            <Link to='/app/home'>
+            <Menu.Item
               name='home'
               active={activeItem === 'home'}
               onClick={this.handleItemClick}
             />
+            </Link>
+
             <Menu.Item className='workplace'
                name='WorkPlace'
             />
-            <Menu.Item as={Link}
-              to='/projects'
+ 
+            <Link to='/app/projects'>
+            <Menu.Item 
               name='Projects'
               active={activeItem === 'Projects'}
               onClick={this.handleItemClick}
             />
+            </Link>
+ 
+            <Link to='/app/mypage'>
             <Menu.Item 
-              to='/mypage/'
               name='MyPage'
               active={activeItem === 'MyPage'}
               onClick={this.handleItemClick}
             />
+            </Link>
+
             <Menu.Item
               name='GitHub'
               onClick={this.handleItemClick}
             />
+
             <Menu.Item className='line'
                name=''
             />
-            <Menu.Item as={Link}
-              to='/users'
+ 
+            <Link to='/app/users'>
+            <Menu.Item
               name='Users'
               active={activeItem === 'Users'}
               onClick={this.handleItemClick}
             />
+            </Link>
+
           </Menu>
           </React.Fragment>
         )

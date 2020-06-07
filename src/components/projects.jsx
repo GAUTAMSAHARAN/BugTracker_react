@@ -38,7 +38,7 @@ class ProjectCard extends Component{
         </Card.Content>
 
         <Link to={{
-            pathname: '/project/',
+            pathname: '/app/project/',
             state: {
               ProjectId: project.id
             }

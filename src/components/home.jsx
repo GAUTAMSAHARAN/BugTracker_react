@@ -42,7 +42,7 @@ class IssueCard extends Component{
                { issue.title }
             </Card.Header>
             <Link to={{
-                pathname: '/issue/',
+                pathname: '/app/issue/',
                 state: {
                     IssueId: issue.id 
                 }
