@@ -30,7 +30,7 @@ class Navbar extends Component {
         <Menu.Item
           name='bars'
           active={activeItem === 'bars'}
-          onClick={this.handleItemClick}
+          onClick={this.props.hideMenu}
         >
           <i class="fas fa-bars"></i>
         </Menu.Item>

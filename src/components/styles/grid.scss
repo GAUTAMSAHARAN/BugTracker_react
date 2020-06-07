@@ -2,4 +2,11 @@
     display: grid;
     grid-template-columns: max-content auto;
     grid-template-rows: max-content auto;
+
+}
+
+.component{
+    grid-row: 2/span 1 !important;
+    grid-column: 2/span 1 !important;
+    margin: 0 auto !important;
 }
