@@ -6,22 +6,39 @@ class LogIn extends Component{
         super(props)
 
         this.state = {
-            IsLoggedIn: false
+            IsLoggedIn: false,
+            enroll: '',
+            UserId: '',
         }
     }
 
-    componentDidMount(){
+    async componentDidMount(){
        let url = window.location.href
        let code = (url.match(/code=([^&]+)/) || [])[1]
        console.log(code);
-        axios.post('http://127.0.0.1:8000/users/login/', { code: code }).then((res)=>{
+       await axios.post('http://127.0.0.1:8000/users/login/', { code: code }).then((res)=>{
           if(res.data.token !== undefined){
               sessionStorage.setItem("token", res.data.token)
               sessionStorage.setItem('IsLoggedIn', true)
-              console.log(res.data.token)
+              this.setState({
+                  enroll: res.data.user_data.student.enrolmentNumber,
+              })
+              console.log(res.data.user_data.student.enrolmentNumber)
             }
         })
-                   
+
+        fetch(`http://127.0.0.1:8000/users/?boss=&enroll=${this.state.enroll}&username=&email=`,{
+
+        })
+        .then(res=>res.json())
+        .then(results=>{
+              this.setState({
+                 UserId: results[0].id
+              })
+              sessionStorage.setItem('UserId', this.state.UserId)
+              console.log(this.state.UserId)
+              console.log(sessionStorage.getItem('UserId'))
+            })  
     };
     
 

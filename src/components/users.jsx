@@ -16,7 +16,12 @@ class Users extends Component{
     }
 
     componentDidMount(){
-        fetch('http://127.0.0.1:8000/users/')
+        fetch('http://127.0.0.1:8000/users/',{
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+           },
+        })
          .then(res=>res.json())
          .then(results => {
              console.log(results)

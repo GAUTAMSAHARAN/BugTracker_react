@@ -35,7 +35,12 @@ class Profile extends Component {
   componentDidMount(){
     const { userId } = this.props.location.state
     console.log(userId);
-    fetch(`http://127.0.0.1:8000/users/1/`)
+    fetch(`http://127.0.0.1:8000/users/${userId}/`,{
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+       },
+    })
      .then(res=>res.json())
      .then(results=>{
        this.setState({
@@ -129,7 +134,7 @@ class Profile extends Component {
 
   async updateUsername(){
     let data = JSON.stringify(this.state.update)
-    const response = await fetch(`http://127.0.0.1:8000/users/1/`,{
+    const response = await fetch(`http://127.0.0.1:8000/users/${sessionStorage.getItem('UserId')}/`,{
       method: 'PUT',
       body: data,
       headers: {
@@ -149,7 +154,7 @@ class Profile extends Component {
 
   async updateSocail(){
     let data = JSON.stringify(this.state.update)
-    const response = await fetch(`http://127.0.0.1:8000/users/1/`,{
+    const response = await fetch(`http://127.0.0.1:8000/users/${sessionStorage.getItem('UserId')}/`,{
       method: 'PUT',
       body: data,
       headers: {

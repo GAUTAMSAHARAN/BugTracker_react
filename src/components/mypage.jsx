@@ -28,7 +28,13 @@ class MyPage extends Component{
     }
 
     componentDidMount(){
-        fetch('http://127.0.0.1:8000/projects/?creater=1&upload_time=')
+        let UserId = parseInt(sessionStorage.getItem('UserId'))
+        fetch(`http://127.0.0.1:8000/projects/?creater=${UserId}&upload_time=`,{
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+           },
+        })
          .then(res=>res.json())
          .then(results=>{
              this.setState({
@@ -36,7 +42,12 @@ class MyPage extends Component{
              })
          })
 
-         fetch('http://127.0.0.1:8000/issues/?important=&creater=1&type=&status=')
+         fetch(`http://127.0.0.1:8000/issues/?important=&creater=${UserId}&type=&status=`,{
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+           },
+         })
           .then(res=>res.json())
           .then(results=>{
               this.setState({
@@ -44,7 +55,12 @@ class MyPage extends Component{
               })
           })
 
-          fetch('http://127.0.0.1:8000/comments/?creater=1')
+          fetch(`http://127.0.0.1:8000/comments/?creater=${UserId}`,{
+            headers: {
+              "Content-type": "application/json; charset=UTF-8",
+              'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+             },
+          })
            .then(res=>res.json())
            .then(results => {
                this.setState({
@@ -121,7 +137,7 @@ class MyPage extends Component{
                    {this.listProjects()}  
                    </div>
                  </Segment>
-                 <Segment style={{display: this.state.activeItem === 'Issues' ? 'block' : 'none'}}>
+                 <Segment style={{display: this.state.activeItem === 'Issues' ? 'blocsk' : 'none'}}>
                  <Header as='h2'>Issues</Header>
                    <Divider section />  
                    {this.listIssues()}    

@@ -63,9 +63,11 @@ class CommentCard extends Component{
       </Segment>
       </Card.Content>
       <Card.Content extra className='extra'>
+        <div style={{display: comment.creater === sessionStorage.getItem('UserId') ? 'block' : 'none'}}>
           <i class="fas fa-pen" style={{display: this.state.form ? 'none' : 'inline'}} onClick={(event) => this.openForm()}></i>
           <i class="fas fa-times" style={{display: this.state.form ? 'inline' : 'none'}} onClick={(event) => this.closeForm()}></i>
           <i class="fas fa-trash"></i>
+          </div>
           <Icon name='user' className='userimg' />
            <p className='time'>Time: {moment(comment.upload_time).fromNow()}</p>
           <p className='name'>Name</p>
@@ -89,7 +91,7 @@ class Issue extends Component{
          open: false,
          values: {
            body: '',
-           creater: '1',
+           creater: sessionStorage.getItem('UserId'),
            issues: '1',
          },
          update: [],
@@ -106,7 +108,12 @@ class Issue extends Component{
 
     componentDidMount(){
        const { IssueId } = this.props.location.state 
-       fetch(`http://127.0.0.1:8000/issues/${IssueId}/`)
+       fetch(`http://127.0.0.1:8000/issues/${IssueId}/`,{
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+         },
+       })
         .then(res => res.json())
         .then(results => {
              this.setState({
@@ -115,7 +122,12 @@ class Issue extends Component{
              })
         })
 
-        fetch(`http://127.0.0.1:8000/issues/1/comments/`)
+        fetch(`http://127.0.0.1:8000/issues/1/comments/`,{
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+           },
+        })
         .then(res=>res.json())
         .then(results=>{
           this.setState({
@@ -349,7 +361,7 @@ class Issue extends Component{
 
           <Card className='issue-head'>
             <Card.Content className='issue-head-header'>
-                <img src={edit} alt='edit'  className='issue-edit' onClick={(event)=> this.OpenOption()} />
+                <img src={edit} alt='edit' style={{display: this.state.issue.creater === sessionStorage.getItem('UserId') ? 'block' : 'none'}} className='issue-edit' onClick={(event)=> this.OpenOption()} />
          <Card.Header style={{display: this.state.form ? 'none' : 'block'}} >{ this.state.issue.title }</Card.Header>
               <Card.Description style={{display: this.state.form ? 'none' : 'block'}} >
                 <div dangerouslySetInnerHTML={{__html: this.state.issue.wiki}} />

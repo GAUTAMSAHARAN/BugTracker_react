@@ -64,14 +64,19 @@ class Projects extends Component {
         title: '',
         desc: '',
         gitlink: '',
-        creater: '1',
-        memebers: [1],
+        creater: sessionStorage.getItem('UserId'),
+        memebers: [sessionStorage.getItem('UserId')],
       },
     };
   }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:8000/projects/")
+    fetch("http://127.0.0.1:8000/projects/", {
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+       },
+    })
       .then((res) => res.json())
       .then((results) => {
         this.setState({
@@ -98,7 +103,12 @@ class Projects extends Component {
         base_url += ''
         break    
     }
-    fetch(base_url)
+    fetch(base_url,{
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+       },
+    })
      .then(res=>res.join())
      .then(results=>{
        this.setState({
@@ -117,6 +127,7 @@ class Projects extends Component {
          },
        });
        console.log(response);
+       console.log(body);
   }
 
   ListProject() {
@@ -153,9 +164,7 @@ class Projects extends Component {
 
   handleProjectCreate = (content) => {
     this.setState({
-        values: {
-          desc: content,
-        }
+      values: { ...this.state.values, desc: content }
     })
   }
 

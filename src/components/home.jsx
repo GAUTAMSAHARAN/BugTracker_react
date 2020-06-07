@@ -112,7 +112,12 @@ class Home extends Component{
                base_url += '?ordering=upload_time'
                break
         }
-        fetch(base_url)
+        fetch(base_url,{
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+               },
+        })
          .then(res=>res.json())
          .then(results=>{
              this.setState({

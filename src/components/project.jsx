@@ -26,7 +26,12 @@ import moment from 'moment';
 import App from './editor';
 import Avatar from 'react-avatar';
 import { IssueCard } from './home';
- 
+
+const validGitUrlRegex = RegExp(
+  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+);
+
+
 class MemberCard extends Component{
   render(){
     const{ member, deleteMemberId } = this.props
@@ -77,16 +82,26 @@ class Project extends Component{
              projectIssues: [],
              teamMembers: [],
              update: [],
+             updateError: {
+                title: '',
+                desc: '',
+                gitLink: '',
+             },
              show: false,
              open: false, 
              issueData: {
                title: '',
                wiki: '',
-               important: true,
+               important: false,
                type: '',
                project: this.props.location.state.ProjectId,
-               creater: 1,
+               creater: parseInt(sessionStorage.getItem('UserId')),
                status: 'P',
+             },
+             issueError: {
+               title: '',
+               wiki: '',   
+               type: '',            
              },
              up: false,
              form: false,
@@ -97,7 +112,12 @@ class Project extends Component{
 
     componentDidMount(){
       const { ProjectId } = this.props.location.state
-      fetch(`http://127.0.0.1:8000/projects/${ProjectId}/`)
+      fetch(`http://127.0.0.1:8000/projects/${ProjectId}/`,{
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+         },
+      })
        .then(res=> res.json())
        .then(results=> {
          this.setState({
@@ -105,9 +125,16 @@ class Project extends Component{
            update: results,
            members: results.memebers,
          })
+         console.log(sessionStorage.getItem('UserId'))
+         console.log(this.state.members)
        })
 
-       fetch(`http://127.0.0.1:8000/projects/${ProjectId}/issues/`)
+       fetch(`http://127.0.0.1:8000/projects/${ProjectId}/issues/`, {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+         },
+       })
         .then(res => res.json())
         .then(results => {
           this.setState({
@@ -115,7 +142,12 @@ class Project extends Component{
           })  
         })
 
-        fetch(`http://127.0.0.1:8000/projects/${ProjectId}/members/`)
+        fetch(`http://127.0.0.1:8000/projects/${ProjectId}/members/`,{
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+           },
+        })
          .then(res=>res.json())
          .then(results=> {
            this.setState({
@@ -123,7 +155,12 @@ class Project extends Component{
            })
          })
 
-        fetch('http://127.0.0.1:8000/users/')
+        fetch('http://127.0.0.1:8000/users/', {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+           },
+        })
         .then(res => res.json())
         .then(results => {
           this.setState({
@@ -186,11 +223,20 @@ class Project extends Component{
       this.setState({
         issueData: { ...this.state.issueData, [name]: value }
       })
+      
+      if(name==='title'){
+        this.setState({
+          issueError: { ...this.state.issueError, title: value.length > 60 ? 'Title must be less than 60 character.' : ''}
+        })
+      }
     }
   
     onSubmit = e => {
+       let {title, wiki} = this.state.issueError 
        let data = JSON.stringify(this.state.issueData)
+       if(title==='' && wiki===''){
        this.createIssue(data);
+      }
     }
 
     show = (dimmer) => () => this.setState({ dimmer, open: true })
@@ -206,6 +252,11 @@ class Project extends Component{
          this.setState({
           issueData: { ...this.state.issueData, type: 'BACK'}
          })
+       }
+       if(this.state.issueData.type === ''){
+            this.setState({
+              issueError: { ...this.state.issueError, type: 'you need to select one of the above options.'}
+            })
        }
      } 
 
@@ -244,10 +295,23 @@ class Project extends Component{
       this.setState({
         update: {...this.state.update, [name]: value}
       })
+      if(name==='title'){
+         this.setState({
+           updateError: {
+             title: value.length > 20 ? 'Title must be less than 20 characters.' : ''
+           }
+         })
+      }
+      if(name==='gitLink'){
+        this.setState({
+          updateError: { ...this.state.updateError, gitLink: validGitUrlRegex.test(value) ? '' : 'Url is not valid!'}
+        })
     }
+  }
 
     updateProject(){
       let data = JSON.stringify(this.state.update)
+      console.log(data)
       let response = fetch(`http://127.0.0.1:8000/projects/${this.state.project.id}/`,{
         method: 'PUT',
         body: data,
@@ -259,6 +323,7 @@ class Project extends Component{
       this.setState({
         project: this.state.update
       })
+      console.log(response);
       this.up()
       this.closeForm()
     }
@@ -268,12 +333,19 @@ class Project extends Component{
       this.setState({
         update: {...this.state.update, desc: content},
       })
+      this.setState({
+        updateError: { ...this.state.updateError, desc: content.length > 500 ? 'description must be less than 500 characters' : ''}
+      })
     }
 
     handleIssueCreate = (content) => {
       this.setState({
         issueData: {...this.state.issueData, wiki: content}
       })
+      this.setState({
+          issueError: { ...this.state.issueError, wiki: content.length > 500 ? 'wiki must be less than 500 character.' : ''}
+      })
+
     }
 
      
@@ -370,7 +442,7 @@ class Project extends Component{
  
  
     render(){
-      const { open, dimmer, value } = this.state
+      const { open, dimmer, value, members} = this.state
 
         return(
             <Container className="project-box">
@@ -385,7 +457,7 @@ class Project extends Component{
                <div dangerouslySetInnerHTML={{__html: this.state.project.desc}} />
                </Card.Description>
              <a><img src={github} alt='gitlink' className='gitlink' /></a>
-               <img src={edit} alt='edit' className='edit' onClick={(event)=> this.up()} />
+               <img src={edit} alt='edit' style={{display: members.includes(parseInt(sessionStorage.getItem('UserId'))) ? 'inline' : 'none'}} className='edit' onClick={(event)=> this.up()} />
                <div className="option-box" style={{display: this.state.up ? 'block' : 'none'}}>
                <div className="delete">
                <Modal trigger={<i class="fas fa-trash"></i>} closeIcon>
@@ -426,9 +498,12 @@ class Project extends Component{
            <Segment className='project-form' style={{display: this.state.form ? 'block' : 'none'}}>
            <Form> 
            <Form.Input label='Title' placeholder='Title' name='title' value={this.state.update.title} onChange={this.onUpdate}  /> 
+           { this.state.updateError.title}
            {/* <Form.TextArea label='Wiki' onChange={this.onChange} name='wiki' value={this.state.update.desc}  placeholder='Write about the issue ' /> */}
            <App onEditorChange={this.handleEditorUpdate} />
+           { this.state.updateError.desc }
            <Form.Input label='Gitlink of the project'  name='gitlink' value={this.state.update.gitLink} onChange={this.onUpdate}  /> 
+           { this.state.updateError.gitLink }
            <Button
             positive
             type='submit'
@@ -445,14 +520,16 @@ class Project extends Component{
 
 
          <div className="add">
-         <i class="fas fa-plus" onClick={this.show('blurring')} ></i>
+         <i style={{display: members.includes(parseInt(sessionStorage.getItem('UserId'))) ? 'block' : 'none'}} class="fas fa-plus" onClick={this.show('blurring')} ></i>
          </div>
 
          <Card className='members'>
           <Card.Content>
             <Card.Header>Members</Card.Header>
+            <div style={{display: members.includes(parseInt(sessionStorage.getItem('UserId'))) ? 'inline' : 'none'}}>
             <i class="fas fa-pen" style={{display: this.state.deleteMember ? 'none' : 'block'}} onClick={ (event)=> this.deleteOpen() }></i>
             <i class="fas fa-times" style={{display: this.state.deleteMember ? 'block' : 'none'}} onClick={ (event)=> this.deleteClose()   }></i>
+            </div>
           </Card.Content>
           <Card.Content className='user-list'>
           <List selection verticalAlign='middle'>
@@ -477,10 +554,12 @@ class Project extends Component{
                  <Form.Field>
                    <label>Title</label>
                    <input placeholder='Title' name='title' value={this.state.issueData.title} onChange={this.onChange} />
+                   {this.state.issueError.title}
                  </Form.Field>
                  <label>Description</label>
                  {/* <Form.TextArea label='Wiki' onChange={this.onChange} name='wiki' value={this.state.issueData.wiki}  placeholder='Write about the issue ' /> */}
                  <App onEditorChange={this.handleIssueCreate} />
+                 {this.state.issueError.wiki}
                  <Form.Group className='inline-options' inline>
                   <label>Type</label>
                    <Form.Field
