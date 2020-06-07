@@ -87,6 +87,9 @@ class Issue extends Component{
          issue: [],
          IssueComments: [],
          updateComment: [],
+         updateCommentError: {
+           body: '',
+         },
          issueId: this.props.location.state.IssueId,
          open: false,
          values: {
@@ -94,7 +97,14 @@ class Issue extends Component{
            creater: sessionStorage.getItem('UserId'),
            issues: '1',
          },
+         commentError: {
+           body: ''
+         },
          update: [],
+         updateError: {
+           title: '',
+           wiki: '',
+         },
          option: false,
          form: false,
          active1: 'front',
@@ -158,7 +168,9 @@ class Issue extends Component{
     
     onSubmit = e =>{
         let data = JSON.stringify(this.state.values)
-        this.createComment(data);
+        if(this.state.commentError.body === ''){
+          this.createComment(data);
+        }
     }
 
     OpenOption(){
@@ -207,6 +219,11 @@ class Issue extends Component{
         this.setState({
           update: { ...this.state.update, [name]: value }
         })
+        if(name === 'title'){
+          this.setState({
+            updateError: {...this.state.updateError, title: value.length > 60 ? 'Title must be less than 60 characters.' : ''}
+          })
+        }
     }
 
    async updateIssue(){
@@ -341,13 +358,21 @@ class Issue extends Component{
       this.setState({
         update: {...this.state.update, wiki: content}
       })
+      this.setState({
+        updateError: {...this.state.updateError, wiki: content.length > 500 ? 'wiki must be less than 500 characters.' : ''}
+      })
     }
 
     handleCommentCreate = (content) => {
       this.setState({
         values: {
           body: content,
-        } 
+        }
+      }) 
+      this.setState({
+        commentError: {
+          body: content.length > 500 ? 'comment-wiki must be less than 500 characters.' : ''
+        }
       })
     }
      
@@ -404,6 +429,7 @@ class Issue extends Component{
           <Form> 
                {/* <Form.TextArea label='Descrpition' onChange={this.onChange} name='body' value={this.state.body}  placeholder='Write a Comment if you have a  solution for the issue' /> */}
                <App onEditorChange={this.handleCommentCreate} placeholder='Write your answer' initialValue='' />
+               {this.state.commentError.body}
                <Button
                 positive
                 type='submit'

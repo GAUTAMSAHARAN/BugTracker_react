@@ -18,6 +18,9 @@ import edit from "./images/edit.png";
 import { Link } from 'react-router-dom';
 import App from './editor';
 
+const validGitUrlRegex = RegExp(
+  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+);
 
 class ProjectCard extends Component{
   render(){
@@ -67,6 +70,11 @@ class Projects extends Component {
         creater: sessionStorage.getItem('UserId'),
         memebers: [sessionStorage.getItem('UserId')],
       },
+      projectError: {
+        title: '',
+        desc: '',
+        gitlink: '',
+      }
     };
   }
 
@@ -154,6 +162,16 @@ class Projects extends Component {
     this.setState({
       values: { ...this.state.values, [name]: value }
     })
+    if(name==='title'){
+          this.setState({
+            projectError: {...this.state.projectError, title: value.length > 40 ? 'title must be less than 40 characters.' : ''}
+          })
+    }
+    if(name==='gitlink'){
+        this.setState({
+          projectError: { ...this.state.projectError, gitlink: validGitUrlRegex.test(value) ? '' : 'Url is not valid!'}
+        })
+    }
   }
 
   onSubmit = e => {
@@ -165,6 +183,9 @@ class Projects extends Component {
   handleProjectCreate = (content) => {
     this.setState({
       values: { ...this.state.values, desc: content }
+    })
+    this.setState({
+      projectError: {...this.state.projectError, desc: content.length > 500 ? 'description must be less than 500 characters.' : ''}
     })
   }
 
@@ -199,12 +220,15 @@ class Projects extends Component {
                  <Form.Field>
                    <label>Title</label>
                    <input placeholder='Title' name='title' value={this.state.title} onChange={this.onChange} />
+                   {this.state.projectError.title}
                  </Form.Field>
                  {/* <Form.TextArea label='Descrpition' onChange={this.onChange} name='desc' value={this.state.desc}  placeholder='Write short description about the project  ' /> */}
                  <App onEditorChange={this.handleProjectCreate} placeholder='write a short description of your project' initialValue='' />
+                 {this.state.projectError.desc}
                  <Form.Field className='link' >
                    <label>Git Link</label>
                    <input placeholder='Git Link' name='gitlink' onChange={this.onChange} value={this.state.gitlink} />
+                   {this.state.projectError.gitlink}
                  </Form.Field>
                  <Button
                   positive
