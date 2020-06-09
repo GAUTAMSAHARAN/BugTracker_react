@@ -2,19 +2,9 @@ import React, { Component } from 'react';
 import Navbar from './navbar';
 import MenuTab from './menu';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-// import Home from './home';
-// import Projects from './projects';
-// import Project from './project';
-// import Issue from './issue';
-// import Users from './users';
-// import GetTokken from './getTokken';
-// import LogIn from './login';
-// import Profile from './profile';
-// import { Container } from 'semantic-ui-react';
-// import MyPage from './mypage';
 import './styles/grid.scss';
 import ROUTES, { RenderRoutes } from "./routes";
-
+import pagination from './pagination';
 
 class Router extends Component{
      
@@ -53,6 +43,7 @@ class Router extends Component{
                 <Route path='/mypage/' component={MyPage} />
             </Switch> */}
             <div className='component'>
+            {/* <pagination /> */}
             <RenderRoutes routes={ROUTES} />
             </div>
             </div>

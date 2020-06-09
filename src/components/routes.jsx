@@ -29,7 +29,7 @@ const ROUTES = [
         },
         routes: [
             { 
-              path: "/app/home",
+              path: "/app",
               key: 'APP_HOME',
               exact: true, 
               component: Home,

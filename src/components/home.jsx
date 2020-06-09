@@ -88,6 +88,7 @@ class Home extends Component{
          })
          .then(res=>res.json())
          .then(results=>{
+            results = results.results
              this.setState({
                  issues: results
              })

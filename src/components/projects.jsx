@@ -11,15 +11,18 @@ import {
   CardContent,
   Modal,    
   Form,
+  Pagination,
 } from "semantic-ui-react";
 import "./styles/projects.scss";
 import github from "./images/githubwhite.png";
 import edit from "./images/edit.png";
 import { Link } from 'react-router-dom';
 import App from './editor';
+import PaginationCard from "./pagination";
+import Pluralize from 'react-pluralize';
 
 const validGitUrlRegex = RegExp(
-  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+  /^(?:git|ssh|https?|git@[-\w.]+):(\/\/)(github\.com)\/(\w{1,})\/(\w{1,})\/?$/
 );
 
 class ProjectCard extends Component{
@@ -27,11 +30,11 @@ class ProjectCard extends Component{
     const { project} = this.props
     return(
         <React.Fragment>
-                      <Card className="project-card">
+        <Card className="project-card">
         <Card.Content className='information-box'>
           <div className="info-box">
           <div className="gitbox">
-            <img src={github} alt="gitlink" className="gitlink" />
+            <img src={github} alt="gitlink" className="gitlink" style={{display: project.gitLink === '' ? 'none' : 'inline'}} />
           </div>
           <div className="wiki"><div dangerouslySetInnerHTML={{__html: project.desc}} /></div>
           </div>
@@ -49,7 +52,7 @@ class ProjectCard extends Component{
         </Link>
         <Card.Content extra>
             <Icon name="user" />
-            {project.memebers.length} Members
+            <Pluralize singular={'member'} count={project.memebers.length} />
         </Card.Content>
       </Card>
         </React.Fragment>
@@ -61,25 +64,28 @@ class Projects extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      count: '',
       Projects: [],
       type: "latest",
       values: {
         title: '',
         desc: '',
         gitlink: '',
-        creater: sessionStorage.getItem('UserId'),
-        memebers: [sessionStorage.getItem('UserId')],
+        creater: parseInt(sessionStorage.getItem('UserId')),
+        memebers: [parseInt(sessionStorage.getItem('UserId'))],
       },
       projectError: {
         title: '',
-        desc: '',
         gitlink: '',
-      }
+      },
+      currentUrl: 'http://127.0.0.1:8000/projects/?page=1'
     };
+    this.sendData = this.sendData.bind(this)
+    this.currentUrl = this.currentUrl.bind(this)
   }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:8000/projects/", {
+    fetch("http://127.0.0.1:8000/projects/?page=1", {
       headers: {
         "Content-type": "application/json; charset=UTF-8",
         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
@@ -88,42 +94,64 @@ class Projects extends Component {
       .then((res) => res.json())
       .then((results) => {
         this.setState({
+            count: results.count,
+        })
+        results = results.results
+        this.setState({
           Projects: results,
           open: false,
         });
       });
   }
 
-  updateProjects(){
-    let type = this.state.type
-    let base_url = 'http://127.0.0.1:8000/projects/'
+  sendData(data){
+    this.setState({
+     Projects: data,
+    })
+  }
+
+  currentUrl(data){
+   this.setState({
+     currentUrl: data,
+   })
+  }
+
+  updateProjects(type){
+    let UserId = parseInt(sessionStorage.getItem('UserId'))
+    console.log(UserId)
+    let base_url = 'http://127.0.0.1:8000/projects/?'
     switch(type){
       case "latest":
-        base_url += ''
+        base_url += 'page=1&ordering=upload_time'
         break
       case "myprojects":
-        base_url += ''
+        base_url += `creater=${UserId}&ordering=desc&upload_time=`
         break
       case "collabrated":
-        base_url += ''
+        base_url += `creater=&memebers=${UserId}&upload_time=`
         break
       default:
-        base_url += ''
+        base_url += 'page=1&ordering=upload_time'
         break    
     }
+    console.log(base_url)
     fetch(base_url,{
       headers: {
         "Content-type": "application/json; charset=UTF-8",
         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
        },
     })
-     .then(res=>res.join())
+     .then(res=>res.json())
      .then(results=>{
+       results = results.results
        this.setState({
          Projects: results
        })
      })
   }
+
+  show = (dimmer) => () => this.setState({ dimmer, open: true })
+  close = () => this.setState({ open: false })
 
   async createProject(body){
        const response = await fetch('http://127.0.0.1:8000/projects/',{
@@ -136,6 +164,7 @@ class Projects extends Component {
        });
        console.log(response);
        console.log(body);
+       this.close()
   }
 
   ListProject() {
@@ -147,15 +176,8 @@ class Projects extends Component {
     );
   }
 
-  updateType(input){
-       this.setState({
-          type: input
-       })
-       this.updateProjects()
-  }
+
   
-  show = (dimmer) => () => this.setState({ dimmer, open: true })
-  close = () => this.setState({ open: false })
   
   onChange = e => {
     const { name, value } = e.target
@@ -184,9 +206,6 @@ class Projects extends Component {
     this.setState({
       values: { ...this.state.values, desc: content }
     })
-    this.setState({
-      projectError: {...this.state.projectError, desc: content.length > 500 ? 'description must be less than 500 characters.' : ''}
-    })
   }
 
   render() {
@@ -197,19 +216,26 @@ class Projects extends Component {
         <Divider section />
         <Segment className="segment">
           <Button.Group className="option-2">
-            <Button color="teal" basic onClick={(event)=>this.updateType('latest')}>
+            <Button color="teal" basic onClick={(event)=>this.updateProjects('latest')}>
               Latest
             </Button>
-            <Button color="blue" basic onClick={(event)=>this.updateType("myprojects")}>
+            <Button color="blue" basic onClick={(event)=>this.updateProjects("myprojects")}>
               MyProjects
             </Button>
-            <Button color="green" basic onClick={(event)=>this.updateType("collabrated")}>
+            <Button color="green" basic onClick={(event)=>this.updateProjects("collabrated")}>
               Collabrated
             </Button>
           </Button.Group>
         </Segment>
         <Divider section />
+
+        <div className='projects-list'>
         {this.ListProject()}
+        </div>
+        
+        <PaginationCard sendData={this.sendData} url={this.state.currentUrl} currentUrl={this.currentUrl} count={this.state.count} />
+        <Divider section />
+
 
         <Modal dimmer={dimmer} open={open} onClose={this.close}>
           <Modal.Header>Create New Project</Modal.Header>
@@ -224,7 +250,6 @@ class Projects extends Component {
                  </Form.Field>
                  {/* <Form.TextArea label='Descrpition' onChange={this.onChange} name='desc' value={this.state.desc}  placeholder='Write short description about the project  ' /> */}
                  <App onEditorChange={this.handleProjectCreate} placeholder='write a short description of your project' initialValue='' />
-                 {this.state.projectError.desc}
                  <Form.Field className='link' >
                    <label>Git Link</label>
                    <input placeholder='Git Link' name='gitlink' onChange={this.onChange} value={this.state.gitlink} />
@@ -235,6 +260,7 @@ class Projects extends Component {
                   type='submit'
                   icon='checkmark'
                   content="Create"
+                  className='create-project-button'
                   onClick={(event) => this.onSubmit()}
                   />
                </Form>

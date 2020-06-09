@@ -149,3 +149,12 @@
 .link{
     margin-top: 10px !important;
 }
+.projects-list{
+    float: left;
+    clear: both !important;
+}
+.create-project-button{
+    position: absolute !important;
+    bottom: -85px;
+    background-color: red !important;
+}

@@ -19,6 +19,7 @@
     "react-avatar": "^3.9.6",
     "react-dom": "^16.13.1",
     "react-particles-js": "^3.2.1",
+    "react-pluralize": "^1.6.3",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "sass-loader": "^8.0.2",

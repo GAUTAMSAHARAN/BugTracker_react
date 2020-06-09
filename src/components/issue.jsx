@@ -94,7 +94,7 @@ class Issue extends Component{
          open: false,
          values: {
            body: '',
-           creater: sessionStorage.getItem('UserId'),
+           creater: parseInt(sessionStorage.getItem('UserId')),
            issues: '1',
          },
          commentError: {
@@ -126,6 +126,7 @@ class Issue extends Component{
        })
         .then(res => res.json())
         .then(results => {
+             results = results.results
              this.setState({
                issue: results,
                update: results,
@@ -140,6 +141,7 @@ class Issue extends Component{
         })
         .then(res=>res.json())
         .then(results=>{
+          results = results.results
           this.setState({
             IssueComments: results,
             updateComment: results,

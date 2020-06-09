@@ -13,6 +13,26 @@
     .user-card{
         height: 300px !important;
         width: 400px !important;
+        .fa-unlock-alt{
+            position: absolute;
+            right: 30px;
+            top: 30px;
+            font-size: 30px;
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+        }
+        .fa-lock{
+            position: absolute;
+            right: 30px;
+            top: 30px;
+            font-size: 30px;
+            &:hover{
+                transform: scale(1.1);
+                cursor: pointer;
+            }   
+        }
         .links{
             position: absolute;
             top: 30px;

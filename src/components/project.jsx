@@ -38,7 +38,14 @@ class MemberCard extends Component{
     return(
        <React.Fragment>
             <List.Item className='list-item'>
+                 <Link to={{
+                 pathname: '/app/user/',
+                 state: {
+                   UserId: member.id
+                 }
+               }}>
                 <Avatar className=' avatar image' name={member.username} />
+                </Link>
                 <div className="delete" style={{display: this.props.delete ? 'block' : 'none'}} onClick={(evnet) => deleteMemberId(member.id)}>
                 <i class="fas fa-trash"></i>
                 </div>
@@ -456,7 +463,7 @@ class Project extends Component{
                <Card.Description >
                <div dangerouslySetInnerHTML={{__html: this.state.project.desc}} />
                </Card.Description>
-             <a><img src={github} alt='gitlink' className='gitlink' /></a>
+             <a href={this.state.project.gitLink} target="_blank"  ><img src={github} alt='gitlink' className='gitlink' style={{display: this.state.project.gitLink === '' ? 'none' : 'inline'}} /></a>
                <img src={edit} alt='edit' style={{display: members.includes(parseInt(sessionStorage.getItem('UserId'))) ? 'inline' : 'none'}} className='edit' onClick={(event)=> this.up()} />
                <div className="option-box" style={{display: this.state.up ? 'block' : 'none'}}>
                <div className="delete">

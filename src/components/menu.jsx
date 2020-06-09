@@ -23,7 +23,7 @@ class MenuTab extends Component{
           <React.Fragment>
             <Menu pointing secondary vertical className='side-menu'>
 
-            <Link to='/app/home'>
+            <Link to='/app/'>
             <Menu.Item
               name='home'
               active={activeItem === 'home'}

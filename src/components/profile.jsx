@@ -23,6 +23,15 @@ class Profile extends Component {
       profile: [],
       activeItem: "Email",
       update: [],
+      updateError:{
+        email: '',
+        mobileno: '',
+        username: '',
+        gitlink: '',
+        facebooklink: '',
+        twitterlink: '',
+        instalink: '',
+      },
       form: {
         emailForm: true,
         usernameForm: false,
@@ -33,9 +42,9 @@ class Profile extends Component {
   }
 
   componentDidMount(){
-    const { userId } = this.props.location.state
-    console.log(userId);
-    fetch(`http://127.0.0.1:8000/users/${userId}/`,{
+    const { UserId } = this.props.location.state
+    console.log(UserId);
+    fetch(`http://127.0.0.1:8000/users/${UserId}/`,{
       headers: {
         "Content-type": "application/json; charset=UTF-8",
         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
@@ -105,11 +114,15 @@ class Profile extends Component {
         emailConfirmation: value,
       })
      }
+     this.setState({
+       updateError: { ...this.state.updateError, email: value.length > 40 ? 'Email is not valid' : ''}
+     })
   }
 
   async updateEmail(){
     let data = JSON.stringify(this.state.update)
     let UserId  = this.props.location.state.userId
+    if(this.state.updateError.email === ''){
     if(this.state.update.email === this.state.emailConfirmation){
         const response = await fetch(`http://127.0.0.1:8000/users/${UserId}/`,{
           method: 'PUT',
@@ -123,17 +136,23 @@ class Profile extends Component {
     }else{
       console.log("error");
     }
+    }
   }
 
   usernameUpdate = (e) => {
    const{ name, value } = e.target
+   console.log(value)
    this.setState({
      update: {...this.state.update, [name]: value}
    })
+   this.setState({
+    updateError: { ...this.state.updateError, username: value.length > 10 ? 'Username must be less than 10 character' : ''}
+  })
   }
 
   async updateUsername(){
     let data = JSON.stringify(this.state.update)
+    if(this.state.updateError.username===''){
     const response = await fetch(`http://127.0.0.1:8000/users/${sessionStorage.getItem('UserId')}/`,{
       method: 'PUT',
       body: data,
@@ -144,16 +163,40 @@ class Profile extends Component {
     });
     console.log(response);
   }
+  }
 
   linkUpdate = e =>{
     const{ name, value } = e.target
+    console.log(name)
+    console.log(value)
     this.setState({
       update: {...this.state.update, [name]: value}
     })
+    if( name === 'gitlink' ){
+      this.setState({
+        updateError: {...this.state.updateError, gitlink: value.length > 20 ? 'url is not valid' : ''}
+      })
+    }
+    if( name === 'facebooklink' ){
+      this.setState({
+        updateError: { ...this.state.updateError, facebooklink: value.length > 20 ? 'url is not valid' : ''}
+      })
+    }
+    if( name=== 'twitterlink' ){
+      this.setState({
+        updateError: { ...this.state.updateError, twitterlink: value.length > 20 ? 'url is not valid' : ''}
+      })
+    }
+    if( name=== 'instalink' ){
+      this.setState({
+        updateError: { ...this.state.updateError, instalink: value.length > 20 ? 'url is not valid' : ''}
+      })
+    }
   }
 
   async updateSocail(){
     let data = JSON.stringify(this.state.update)
+    if(this.state.updateError.username === ''){
     const response = await fetch(`http://127.0.0.1:8000/users/${sessionStorage.getItem('UserId')}/`,{
       method: 'PUT',
       body: data,
@@ -163,6 +206,7 @@ class Profile extends Component {
       },
     });
     console.log(response);  
+    }
   }
 
   render() {
@@ -195,10 +239,10 @@ class Profile extends Component {
             </Card.Content>
           </Card>
           <div className="links">
-            <Button circular color="facebook" icon="facebook" />
-            <Button circular color="twitter" icon="twitter" />
-            <Button circular color="instagram" icon="instagram" />
-            <Button circular color="google plus" icon="google plus" />
+          <a href={this.state.profile.facebookProfile} target="_blank" ><Button circular color="facebook" icon="facebook" style={{display: this.state.profile.facebookProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={this.state.profile.twitterProfile} target="_blank" ><Button circular color="twitter" icon="twitter" style={{display: this.state.profile.twitterProfile === '' ? 'none' : 'inline'}} /> </a>
+           <a href={this.state.profile.instaProfile} target="_blank" > <Button circular color="instagram" icon="instagram" style={{display: this.state.profile.instaProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={this.state.profile.gitProfile} target="_blank"> <Button circular color="google plus" icon="google plus" style={{display: this.state.profile.gitProfile === '' ? 'none' : 'inline'}} /></a>
           </div>
         </Segment>
         <div>
@@ -237,6 +281,7 @@ class Profile extends Component {
                 value={this.state.update.email}
                 onChange={this.emailUpdate}
               />
+              {this.state.updateError.email}
               <Form.Input
                 label="Email Confirmation"
                 placeholder="Email"
@@ -265,6 +310,7 @@ class Profile extends Component {
                 value={this.state.update.username}
                 onChange={this.usernameUpdate}
               />
+              {this.state.updateError.username}
               <Button
                 positive
                 type="submit"
@@ -286,6 +332,7 @@ class Profile extends Component {
                 value={this.state.update.gitProfile}
                 onChange={this.linkUpdate}
               />
+              { this.state.updateError.gitlink }
               <Form.Input
                 label="Facebook"
                 placeholder="put your Facebook profile link here"
@@ -293,6 +340,7 @@ class Profile extends Component {
                 value={this.state.update.facebookProfile}
                 onChange={this.linkUpdate}
               />
+              { this.state.updateError.facebooklink }
               <Form.Input
                 label="Twitter"
                 placeholder="put your Twitter profile link here"
@@ -300,6 +348,7 @@ class Profile extends Component {
                 value={this.state.update.twitterProfile}
                 onChange={this.linkUpdate}
               />
+              { this.state.updateError.twitterlink }
               <Form.Input
                 label="Instagram"
                 placeholder="put your Instagram profile link here"
@@ -307,6 +356,7 @@ class Profile extends Component {
                 value={this.state.update.instaProfile}
                 onChange={this.linkUpdate}
               />
+              { this.state.updateError.instalink}
               <Button
                 positive
                 type="submit"

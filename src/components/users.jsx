@@ -12,10 +12,16 @@ class Users extends Component{
            users: [],
            usersLeft: [],
            usersRight: [],
+           Boss: false,
+           value: {
+             disable: false,
+           },
        }
     }
 
     componentDidMount(){
+      console.log(this.state.value.disable)
+
         fetch('http://127.0.0.1:8000/users/',{
           headers: {
             "Content-type": "application/json; charset=UTF-8",
@@ -24,6 +30,7 @@ class Users extends Component{
         })
          .then(res=>res.json())
          .then(results => {
+             results = results.results
              console.log(results)
              this.setState({
                  users: results,
@@ -36,23 +43,62 @@ class Users extends Component{
          })
     }
 
+    UserBlock(id){
+         this.setState({
+           value: {
+             disable: true,
+           },
+         })
+         console.log(this.state.value.disable)
+         let data = JSON.stringify(this.state.value)
+         let response = fetch(`http://127.0.0.1:8000/users/${id}/`,{
+          method: 'PATCH', body: data,
+          headers: {
+              "Content-type": "application/json; charset=UTF-8",
+              'Authorization': `Token ${sessionStorage.getItem('token')}`,
+          },
+        })
+        console.log(response)
+    
+    }
+
+    UserOpen(id){
+       this.setState({
+         value: {
+           disable: false,
+         }
+       })
+     console.log(this.state.value.disable)
+     let data = JSON.stringify(this.state.value)
+     let response = fetch(`http://127.0.0.1:8000/users/${id}/`,{
+      method: 'PATCH', body: data,
+      headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          'Authorization': `Token ${sessionStorage.getItem('token')}`,
+      },
+    })
+    console.log(response)
+    }
+
     listUsersodd(){
         let userList = this.state.usersLeft.map((user)=>
         <React.Fragment>
         <Card className='user-card'>
         <Card.Content className='avatar-box'>
+        <i class="fa fa-unlock-alt" onClick={(event)=>this.UserBlock(user.id) } style={{display: this.state.value.disable ? 'none' : 'inline'}}  ></i>
+        <i class="fa fa-lock" style={{display: this.state.value.disable ? 'inline' : 'none'}} onClick={(event)=>this.UserOpen(user.id) } ></i>   
            <Avatar className='avatar' name={user.username} />
            <div className="links">
-            <Button circular color="facebook" icon="facebook" />
-            <Button circular color="twitter" icon="twitter" />
-            <Button circular color="instagram" icon="instagram" />
-            <Button circular color="google plus" icon="google plus" />
+           <a href={user.facebookProfile} target="_blank" ><Button circular color="facebook" icon="facebook" style={{display: user.facebookProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={user.twitterProfile} target="_blank" ><Button circular color="twitter" icon="twitter" style={{display: user.twitterProfile === '' ? 'none' : 'inline'}} /> </a>
+           <a href={user.instaProfile} target="_blank" > <Button circular color="instagram" icon="instagram" style={{display: user.instaProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={user.gitProfile} target="_blank"> <Button circular color="google plus" icon="google plus" style={{display: user.gitProfile === '' ? 'none' : 'inline'}} /></a>
           </div>
         </Card.Content>
         <Card.Content>
         <Card.Header>{user.username}</Card.Header>
         <Link to={{
-            pathname: '/user/',
+            pathname: '/app/user/',
             state: {
               UserId: user.id
             }
@@ -76,12 +122,13 @@ class Users extends Component{
         <React.Fragment>
         <Card className='user-card'>
         <Card.Content className='avatar-box'>
+        <i class="fa fa-unlock-alt"></i>
            <Avatar className='avatar' name={user.username} />
            <div className="links">
-            <Button circular color="facebook" icon="facebook" />
-            <Button circular color="twitter" icon="twitter" />
-            <Button circular color="instagram" icon="instagram" />
-            <Button circular color="google plus" icon="google plus" />
+           <a href={user.facebookProfile} target="_blank" ><Button circular color="facebook" icon="facebook" style={{display: user.facebookProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={user.twitterProfile} target="_blank" ><Button circular color="twitter" icon="twitter" style={{display: user.twitterProfile === '' ? 'none' : 'inline'}} /> </a>
+           <a href={user.instaProfile} target="_blank" > <Button circular color="instagram" icon="instagram" style={{display: user.instaProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={user.gitProfile} target="_blank"> <Button circular color="google plus" icon="google plus" style={{display: user.gitProfile === '' ? 'none' : 'inline'}} /></a>
           </div>
         </Card.Content>
         <Card.Content>

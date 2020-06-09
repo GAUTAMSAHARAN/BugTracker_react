@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router';
 const axios = require('axios');
 
 class LogIn extends Component{
@@ -28,22 +29,30 @@ class LogIn extends Component{
         })
 
         fetch(`http://127.0.0.1:8000/users/?boss=&enroll=${this.state.enroll}&username=&email=`,{
-
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+               },
         })
         .then(res=>res.json())
         .then(results=>{
+             results = results.results
               this.setState({
                  UserId: results[0].id
               })
               sessionStorage.setItem('UserId', this.state.UserId)
               console.log(this.state.UserId)
               console.log(sessionStorage.getItem('UserId'))
-            })  
+            })
+        
     };
     
 
     render(){
-        return null
+        return(
+            null
+        )
+
     }
 }
 
