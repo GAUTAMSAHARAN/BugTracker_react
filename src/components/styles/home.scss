@@ -69,10 +69,23 @@
 .large{
     height: fit-content !important;
 }
-.date{
-    color: black !important;
-    font-weight: bolder !important;
+.extra-box{
+    height: fit-content !important;
+    .extra{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        .date{
+            color: black !important;
+            font-weight: bolder !important;
+        }
+        .project-name{
+            color: black;
+        }
+    }
 }
+
+
 .date-format{
     font-size: 14px;
     margin-left: 10px;

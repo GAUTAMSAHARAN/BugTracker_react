@@ -16,6 +16,8 @@ import { Link } from 'react-router-dom';
 import Background from './images/options.jpg';
 import moment from 'moment';
 import App from './editor';
+import Avatar from 'react-avatar';
+
 
 
 class CommentCard extends Component{
@@ -68,10 +70,10 @@ class CommentCard extends Component{
           <i class="fas fa-times" style={{display: this.state.form ? 'inline' : 'none'}} onClick={(event) => this.closeForm()}></i>
           <i class="fas fa-trash"></i>
           </div>
-          <Icon name='user' className='userimg' />
+          <Avatar className='userimg' name={comment.username} />
            <p className='time'>Time: {moment(comment.upload_time).fromNow()}</p>
-          <p className='name'>Name</p>
-          <p className='member'>Member</p>
+    <p className='name'>{comment.username}</p>
+    <p className='member'>{comment.member ? 'member' : 'not a member'}</p>
       </Card.Content>
     </Card>
     )
@@ -95,10 +97,7 @@ class Issue extends Component{
          values: {
            body: '',
            creater: parseInt(sessionStorage.getItem('UserId')),
-           issues: '1',
-         },
-         commentError: {
-           body: ''
+           issues: '',
          },
          update: [],
          updateError: {
@@ -126,14 +125,14 @@ class Issue extends Component{
        })
         .then(res => res.json())
         .then(results => {
-             results = results.results
              this.setState({
                issue: results,
                update: results,
+               values: { ...this.state.values, issues: results.id}
              })
         })
 
-        fetch(`http://127.0.0.1:8000/issues/1/comments/`,{
+        fetch(`http://127.0.0.1:8000/issues/${IssueId}/comments/`,{
           headers: {
             "Content-type": "application/json; charset=UTF-8",
             'Authorization': `Token ${sessionStorage.getItem('token')}`,  
@@ -141,7 +140,6 @@ class Issue extends Component{
         })
         .then(res=>res.json())
         .then(results=>{
-          results = results.results
           this.setState({
             IssueComments: results,
             updateComment: results,
@@ -158,6 +156,7 @@ class Issue extends Component{
               'Authorization': `Token ${sessionStorage.getItem('token')}`,  
             }
           });
+          console.log(data);
           console.log(response);
     }
 
@@ -170,9 +169,7 @@ class Issue extends Component{
     
     onSubmit = e =>{
         let data = JSON.stringify(this.state.values)
-        if(this.state.commentError.body === ''){
-          this.createComment(data);
-        }
+        this.createComment(data);
     }
 
     OpenOption(){
@@ -367,15 +364,8 @@ class Issue extends Component{
 
     handleCommentCreate = (content) => {
       this.setState({
-        values: {
-          body: content,
-        }
+        values: {...this.state.values, body: content}
       }) 
-      this.setState({
-        commentError: {
-          body: content.length > 500 ? 'comment-wiki must be less than 500 characters.' : ''
-        }
-      })
     }
      
     render(){         
@@ -431,7 +421,6 @@ class Issue extends Component{
           <Form> 
                {/* <Form.TextArea label='Descrpition' onChange={this.onChange} name='body' value={this.state.body}  placeholder='Write a Comment if you have a  solution for the issue' /> */}
                <App onEditorChange={this.handleCommentCreate} placeholder='Write your answer' initialValue='' />
-               {this.state.commentError.body}
                <Button
                 positive
                 type='submit'

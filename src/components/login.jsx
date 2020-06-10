@@ -36,11 +36,11 @@ class LogIn extends Component{
         })
         .then(res=>res.json())
         .then(results=>{
-             results = results.results
+              results = results.results
               this.setState({
                  UserId: results[0].id
               })
-              sessionStorage.setItem('UserId', this.state.UserId)
+              sessionStorage.setItem('UserId', results[0].id)
               console.log(this.state.UserId)
               console.log(sessionStorage.getItem('UserId'))
             })

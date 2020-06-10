@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './styles/home.scss';
 import { Container, Header, Divider, Button, Segment, Card, CardContent } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
+
 
 class IssueCard extends Component{
     constructor(props){
@@ -52,12 +54,15 @@ class IssueCard extends Component{
             </Card.Content>
             <Card.Content  className='card-content-2' style={{display:  this.state.show ? 'block' : 'none'}}>
             <Card.Description className='description'>
-              { issue.wiki } 
+              <div dangerouslySetInnerHTML={{ __html: issue.wiki }} />
             </Card.Description>
             </Card.Content>
     
-            <Card.Content extra style={{display:  this.state.show ? 'block' : 'none'}}>
-              <h3 ><span className='date'>Date:</span><span className='date-format'>{ issue.upload_time }</span></h3>
+            <Card.Content extra className='extra-box'  style={{display:  this.state.show ? 'block' : 'none'}}>
+              <div className='extra'> 
+              <h3><span className='date'>Date:</span><span className='date-format'>{moment(issue.upload_time).fromNow()}</span></h3>
+              <span className='project-name'>{issue.projectName}</span>
+              </div>
             </Card.Content>
           
          </Card>

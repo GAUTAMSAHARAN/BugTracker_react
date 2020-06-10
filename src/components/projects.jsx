@@ -85,7 +85,7 @@ class Projects extends Component {
   }
 
   componentDidMount() {
-    fetch("http://127.0.0.1:8000/projects/?page=1", {
+    fetch("http://127.0.0.1:8000/projects/?page=1&ordering=upload_time", {
       headers: {
         "Content-type": "application/json; charset=UTF-8",
         'Authorization': `Token ${sessionStorage.getItem('token')}`,  

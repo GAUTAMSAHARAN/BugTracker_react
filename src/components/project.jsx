@@ -26,9 +26,12 @@ import moment from 'moment';
 import App from './editor';
 import Avatar from 'react-avatar';
 import { IssueCard } from './home';
+import { Redirect } from 'react-router'
+import Pluralize from 'react-pluralize';
+
 
 const validGitUrlRegex = RegExp(
-  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+  /^(?:git|ssh|https?|git@[-\w.]+):(\/\/)(github\.com)\/(\w{1,})\/(\w{1,})\/?$/
 );
 
 
@@ -107,7 +110,6 @@ class Project extends Component{
              },
              issueError: {
                title: '',
-               wiki: '',   
                type: '',            
              },
              up: false,
@@ -170,6 +172,7 @@ class Project extends Component{
         })
         .then(res => res.json())
         .then(results => {
+          results = results.results
           this.setState({
             users: results
           })
@@ -210,6 +213,9 @@ class Project extends Component{
       })
       .then(res => res.json())
       .then(res=> console.log(res))
+      return(
+        <Redirect to='/app/projects' />
+      )
     }
 
     async createIssue(data){
@@ -239,10 +245,11 @@ class Project extends Component{
     }
   
     onSubmit = e => {
-       let {title, wiki} = this.state.issueError 
+       let {title} = this.state.issueError 
        let data = JSON.stringify(this.state.issueData)
-       if(title==='' && wiki===''){
+       if(title===''){
        this.createIssue(data);
+       this.close()
       }
     }
 
@@ -340,9 +347,6 @@ class Project extends Component{
       this.setState({
         update: {...this.state.update, desc: content},
       })
-      this.setState({
-        updateError: { ...this.state.updateError, desc: content.length > 500 ? 'description must be less than 500 characters' : ''}
-      })
     }
 
     handleIssueCreate = (content) => {
@@ -414,7 +418,7 @@ class Project extends Component{
          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
         },
       })
-      console.log(this.state.project)
+      
     }
 
     deleteMemberId = (id) => {
@@ -494,7 +498,7 @@ class Project extends Component{
              </Card.Content>
              <Card.Content extra className='project-extra' >
                  <Icon name='user' />
-                 {this.state.teamMembers.length} Members
+                 <Pluralize singular={'member'} count={this.state.teamMembers.length} />
                  <div className="time">
                   <Icon name='clock' />
                   <p>{moment(this.state.project.upload_time).fromNow()}</p>
@@ -508,8 +512,7 @@ class Project extends Component{
            { this.state.updateError.title}
            {/* <Form.TextArea label='Wiki' onChange={this.onChange} name='wiki' value={this.state.update.desc}  placeholder='Write about the issue ' /> */}
            <App onEditorChange={this.handleEditorUpdate} />
-           { this.state.updateError.desc }
-           <Form.Input label='Gitlink of the project'  name='gitlink' value={this.state.update.gitLink} onChange={this.onUpdate}  /> 
+           <Form.Input label='Gitlink of the project'  name='gitLink' value={this.state.update.gitLink} onChange={this.onUpdate}  /> 
            { this.state.updateError.gitLink }
            <Button
             positive
@@ -566,7 +569,6 @@ class Project extends Component{
                  <label>Description</label>
                  {/* <Form.TextArea label='Wiki' onChange={this.onChange} name='wiki' value={this.state.issueData.wiki}  placeholder='Write about the issue ' /> */}
                  <App onEditorChange={this.handleIssueCreate} />
-                 {this.state.issueError.wiki}
                  <Form.Group className='inline-options' inline>
                   <label>Type</label>
                    <Form.Field
@@ -584,14 +586,12 @@ class Project extends Component{
                      onChange={this.handleChange}
                    />
                  </Form.Group>
-                 <Form.Field>
-                   <Checkbox  onChange={(e, data) => this.handleCheckBox(e, data.value)} label='Important' />
-                 </Form.Field>
                  <Button
                   positive
                   type='submit'
                   icon='checkmark'
                   content="Create"
+                  className='issue-create-button'
                   onClick={(event) => this.onSubmit()}
                   />
                </Form>
@@ -599,16 +599,9 @@ class Project extends Component{
                </Modal.Description>
              </Modal.Content>
              <Modal.Actions>
-               <Button color='black' onClick={this.close}>
+               <Button color='black' onClick={this.close} >
                  Nope
                </Button>
-               <Button
-                 positive
-                 icon='checkmark'
-                 labelPosition='right'
-                 content="Yep, that's me"
-                 onClick={this.close}
-               />
              </Modal.Actions>
            </Modal>
          </div>
