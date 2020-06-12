@@ -20,6 +20,8 @@ import { Link } from 'react-router-dom';
 import App from './editor';
 import PaginationCard from "./pagination";
 import Pluralize from 'react-pluralize';
+import SmallPlaceHolder from './smallplaceholder';
+import LargePlaceHolder from './largeplaceholder';
 
 const validGitUrlRegex = RegExp(
   /^(?:git|ssh|https?|git@[-\w.]+):(\/\/)(github\.com)\/(\w{1,})\/(\w{1,})\/?$/
@@ -34,7 +36,7 @@ class ProjectCard extends Component{
         <Card.Content className='information-box'>
           <div className="info-box">
           <div className="gitbox">
-            <img src={github} alt="gitlink" className="gitlink" style={{display: project.gitLink === '' ? 'none' : 'inline'}} />
+           <a href={project.gitLink} target="_blank" ><img src={github} alt="gitlink" className="gitlink" style={{display: project.gitLink === '' ? 'none' : 'inline'}} /></a>
           </div>
           <div className="wiki"><div dangerouslySetInnerHTML={{__html: project.desc}} /></div>
           </div>
@@ -168,9 +170,19 @@ class Projects extends Component {
   }
 
   ListProject() {
-    let projectLists = this.state.Projects.map((project) => 
-       <ProjectCard project={project} />
-    );
+    let projectLists = ''
+    if(this.state.Projects.length == 0){
+      projectLists =  <Container className='placeholder-container'>
+                      <SmallPlaceHolder />
+                      <LargePlaceHolder />
+                      <LargePlaceHolder />
+                      <SmallPlaceHolder />
+                      </Container>
+    }else{
+      projectLists = this.state.Projects.map((project) => 
+      <ProjectCard project={project} />
+      );
+    }
     return(
         projectLists
     );

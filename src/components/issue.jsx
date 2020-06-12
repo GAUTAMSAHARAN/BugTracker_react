@@ -113,6 +113,7 @@ class Issue extends Component{
          },
          commentForm: false,
       }
+      this.statusUpdateRequest = this.statusUpdateRequest.bind(this)
     }
 
     componentDidMount(){
@@ -128,8 +129,48 @@ class Issue extends Component{
              this.setState({
                issue: results,
                update: results,
-               values: { ...this.state.values, issues: results.id}
+               values: { ...this.state.values, issues: results.id},
              })
+             switch(results.status){
+              case "P":
+                this.setState({
+                  active2: 'pending'
+                }) 
+                   break
+              case "T":
+                 this.setState({
+                   active2: 'to be discussed'
+                 })
+                 break
+              case "R":
+                this.setState({
+                  active2: 'resolved'
+                }) 
+                 break
+             default:
+              this.setState({
+                active2: 'pending'
+              }) 
+                 break
+          }
+          switch(results.type){
+            case "FRONT":
+              this.setState({
+                active1: 'front',
+              })
+              break
+            case "BACK":
+              this.setState({
+                active1: 'back',
+              })
+              break
+            default:
+              this.setState({
+                active1: 'front'
+              })
+              break
+          }
+
         })
 
         fetch(`http://127.0.0.1:8000/issues/${IssueId}/comments/`,{
@@ -293,12 +334,12 @@ class Issue extends Component{
        })
        console.log(this.state.update)
        if(string === 'front'){
-          this.setState({
+         await this.setState({
             active1: 'front'
           })
        }
        if(string === 'back'){
-         this.setState({
+         await this.setState({
            active1: 'back'
          })
        }
@@ -317,28 +358,7 @@ class Issue extends Component{
        })
     }
 
-    async statusUpdate(string){
-      switch(string){
-          case "to be discussed":
-             this.setState({
-               update: {...this.state.update, status: "T"},
-               active2: 'to be discussed'
-             })
-             break
-          case "resolved":
-            this.setState({
-              update: {...this.state.update, status: "R"},
-              active2: 'resolved'
-            }) 
-             break
-         default:
-          this.setState({
-            update: {...this.state.update, status: "P"},
-            active2: 'pending'
-          }) 
-             break
-      }
-      let data = JSON.stringify(this.state.update)
+    async statusUpdateRequest(data){
       let IssueId = this.state.issue.id
       const response = await fetch(`http://127.0.0.1:8000/issues/${IssueId}/`,{
        method: 'PUT',
@@ -348,9 +368,41 @@ class Issue extends Component{
         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
        },
       })
+      console.log(response)
       this.setState({
         issue: this.state.update
       })
+    }
+
+    async statusUpdate(string){
+      switch(string){
+          case "pending":
+            await this.setState({
+              update: {...this.state.update, status: "P"},
+              active2: 'pending'
+            }) 
+               break
+          case "to be discussed":
+             await this.setState({
+               update: {...this.state.update, status: "T"},
+               active2: 'to be discussed'
+             })
+             break
+          case "resolved":
+            await this.setState({
+              update: {...this.state.update, status: "R"},
+              active2: 'resolved'
+            }) 
+             break
+         default:
+          await this.setState({
+            update: {...this.state.update, status: "P"},
+            active2: 'pending'
+          }) 
+             break
+      }
+      let data = JSON.stringify(this.state.update)
+      this.statusUpdateRequest(data)
     }
 
     handleEditorUpdateIssue = (content) => {
@@ -368,7 +420,7 @@ class Issue extends Component{
       }) 
     }
      
-    render(){         
+    render(){        
         return(
           <React.Fragment>
           <Container className='issue-box'>
@@ -378,7 +430,7 @@ class Issue extends Component{
 
           <Card className='issue-head'>
             <Card.Content className='issue-head-header'>
-                <img src={edit} alt='edit' style={{display: this.state.issue.creater === sessionStorage.getItem('UserId') ? 'block' : 'none'}} className='issue-edit' onClick={(event)=> this.OpenOption()} />
+                <img src={edit} alt='edit' style={{display: this.state.issue.creater === parseInt(sessionStorage.getItem('UserId')) ? 'block' : 'none'}} className='issue-edit' onClick={(event)=> this.OpenOption()} />
          <Card.Header style={{display: this.state.form ? 'none' : 'block'}} >{ this.state.issue.title }</Card.Header>
               <Card.Description style={{display: this.state.form ? 'none' : 'block'}} >
                 <div dangerouslySetInnerHTML={{__html: this.state.issue.wiki}} />

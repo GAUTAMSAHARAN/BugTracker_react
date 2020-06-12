@@ -28,6 +28,7 @@ import Avatar from 'react-avatar';
 import { IssueCard } from './home';
 import { Redirect } from 'react-router'
 import Pluralize from 'react-pluralize';
+import LargePlaceHolder from './largeplaceholder';
 
 
 const validGitUrlRegex = RegExp(
@@ -104,9 +105,9 @@ class Project extends Component{
                wiki: '',
                important: false,
                type: '',
-               project: this.props.location.state.ProjectId,
-               creater: parseInt(sessionStorage.getItem('UserId')),
                status: 'P',
+               creater: parseInt(sessionStorage.getItem('UserId')),
+               project: this.props.location.state.ProjectId,
              },
              issueError: {
                title: '',
@@ -194,9 +195,19 @@ class Project extends Component{
 
     IssueList(){
        let show = this.state.show
-       let issueList = this.state.projectIssues.map((issue)=>
-            <IssueCard issue={issue} />
-       );
+       let issueList = ''
+       if(this.state.projectIssues.length == 0){
+         issueList = <Container>
+                     <LargePlaceHolder />
+                     <LargePlaceHolder />
+                     <LargePlaceHolder />
+                     <LargePlaceHolder />
+                     </Container>
+       }else{
+         issueList = this.state.projectIssues.map((issue)=>
+              <IssueCard issue={issue} />
+         );
+       }
        return(
          issueList
        )
@@ -431,9 +442,17 @@ class Project extends Component{
   }
 
     listmember(){
-       let  memberList = this.state.teamMembers.map((member) =>
-             <MemberCard member={member} delete={this.state.deleteMember} deleteMemberId = {this.deleteMemberId} />
-      )      
+      let memberList = ''
+      if(this.state.teamMembers.length==0){
+        memberList = <Container>
+                      <LargePlaceHolder />
+                      <LargePlaceHolder />
+                     </Container>
+      }else{
+        memberList = this.state.teamMembers.map((member) =>
+              <MemberCard member={member} delete={this.state.deleteMember} deleteMemberId = {this.deleteMemberId} />
+       )      
+      }
       return(
         memberList
       )
