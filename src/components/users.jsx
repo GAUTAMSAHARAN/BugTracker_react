@@ -1,9 +1,105 @@
 import React, { Component } from 'react';
 import './styles/users.scss';
-import { Container, Header, Divider, Card, Icon, Segment, Button } from 'semantic-ui-react';
+import { Container, Header, Divider, Card, Icon, Segment, Button, CardContent } from 'semantic-ui-react';
 import Avatar from 'react-avatar';
 import { Link } from 'react-router-dom';
 
+class UserCard extends Component{
+     
+     constructor(props){
+       super(props)
+       this.state={
+         editOpen: false,
+         block: this.props.user.disable,
+         boss: this.props.user.boss,
+       }
+       this.openEdit = this.openEdit.bind(this)
+     }
+
+     openEdit(){
+       this.setState({
+         editOpen: this.state.editOpen ? false : true
+       })
+     }
+
+     lock(){
+       this.setState({
+         block: true, 
+       })
+       this.props.UserBlock(this.props.user.id)
+     }
+
+     unlock(){
+       this.setState({
+         block: false
+       })
+       this.props.UserOpen(this.props.user.id)
+     }
+
+     makeBoss(){
+       this.setState({
+         boss: true,
+       })
+       this.props.MakeUserBoss(this.props.user.id)
+     }
+
+     unmakeBoss(){
+       this.setState({
+         boss: false
+       })
+       this.props.UnMakeUserBoss(this.props.user.id)
+     }
+
+     render(){
+       const {user} = this.props
+       return(
+         <React.Fragment>
+        <Card className='user-card'>
+        <Card.Content className='avatar-box' style={{display: this.state.editOpen ? 'none' : 'block'}}>
+           <i class="fa fa-pen" onClick={(event)=>this.openEdit()}></i>
+           <Link to={{
+            pathname: '/app/user/',
+            state: {
+              UserId: user.id
+            }
+          }}>
+           <Avatar className='avatar' name={user.username} />
+        </Link>
+           <div className="links">
+           <a href={user.facebookProfile} target="_blank" ><Button circular color="facebook" icon="facebook" style={{display: user.facebookProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={user.twitterProfile} target="_blank" ><Button circular color="twitter" icon="twitter" style={{display: user.twitterProfile === '' ? 'none' : 'inline'}} /> </a>
+           <a href={user.instaProfile} target="_blank" > <Button circular color="instagram" icon="instagram" style={{display: user.instaProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={user.gitProfile} target="_blank"> <Button circular color="google plus" icon="google plus" style={{display: user.gitProfile === '' ? 'none' : 'inline'}} /></a>
+          </div>
+        </Card.Content>
+        <CardContent className='avatar-box' style={{display: this.state.editOpen ? 'block' : 'none'}}>
+        <i class="fa fa-times" onClick={(event)=>this.openEdit()}></i>
+        <div className="flex-box">
+        <div className="block" style={{display: this.state.block ? 'none' : 'inline'}} onClick={(event)=>this.lock()} >
+        <i class="fas fa-unlock"></i>
+        </div>
+        <div className="block-active" style={{display: this.state.block ? 'inline' : 'none'}} onClick={(event)=>this.unlock()} >
+        <i class="fas fa-lock"></i>
+        </div>
+        <div className="boss" style={{display: this.state.boss ? 'none' : 'inline'}} onClick={(event)=>this.makeBoss()} >
+        <i class="fas fa-crown"></i>
+        </div>
+        <div className="boss-acitve" style={{display: this.state.boss ? 'inline' : 'none'}} onClick={(event)=>this.unmakeBoss()} >
+        <i class="fas fa-crown"></i>
+        </div>
+        </div>
+        </CardContent>
+        <Card.Content>
+        <Card.Header>{user.username}</Card.Header>
+          <Card.Description>
+            {user.email}
+          </Card.Description>
+        </Card.Content>
+      </Card>
+         </React.Fragment>
+       )
+     }
+}
 
 class Users extends Component{
     constructor(props){
@@ -16,7 +112,14 @@ class Users extends Component{
            value: {
              disable: false,
            },
+           value2: {
+             boss: false,
+           }
        }
+       this.UserBlock = this.UserBlock.bind(this)
+       this.UserOpen = this.UserOpen.bind(this)
+       this.MakeUserBoss = this.MakeUserBoss.bind(this)
+       this.UnMakeUserBoss = this.UnMakeUserBoss.bind(this)
     }
 
     componentDidMount(){
@@ -43,8 +146,8 @@ class Users extends Component{
          })
     }
 
-    UserBlock(id){
-         this.setState({
+    async UserBlock(id){
+         await this.setState({
            value: {
              disable: true,
            },
@@ -62,8 +165,8 @@ class Users extends Component{
     
     }
 
-    UserOpen(id){
-       this.setState({
+    async UserOpen(id){
+      await this.setState({
          value: {
            disable: false,
          }
@@ -80,37 +183,45 @@ class Users extends Component{
     console.log(response)
     }
 
+    async MakeUserBoss(id){
+      await this.setState({
+        value2: {
+          boss: false,
+        }
+      })
+    console.log(this.state.value2.boss)
+    let data = JSON.stringify(this.state.value2)
+    let response = fetch(`http://127.0.0.1:8000/users/${id}/`,{
+     method: 'PATCH', body: data,
+     headers: {
+         "Content-type": "application/json; charset=UTF-8",
+         'Authorization': `Token ${sessionStorage.getItem('token')}`,
+     },
+   })
+   console.log(response)
+    }
+
+    async UnMakeUserBoss(id){
+      await this.setState({
+        value2: {
+          boss: false,
+        }
+      })
+    console.log(this.state.value2.boss)
+    let data = JSON.stringify(this.state.value2)
+    let response = fetch(`http://127.0.0.1:8000/users/${id}/`,{
+     method: 'PATCH', body: data,
+     headers: {
+         "Content-type": "application/json; charset=UTF-8",
+         'Authorization': `Token ${sessionStorage.getItem('token')}`,
+     },
+   })
+   console.log(response)
+    }
+
     listUsersodd(){
         let userList = this.state.usersLeft.map((user)=>
-        <React.Fragment>
-        <Card className='user-card'>
-        <Card.Content className='avatar-box'>
-        <i class="fa fa-unlock-alt" onClick={(event)=>this.UserBlock(user.id) } style={{display: this.state.value.disable ? 'none' : 'inline'}}  ></i>
-        <i class="fa fa-lock" style={{display: this.state.value.disable ? 'inline' : 'none'}} onClick={(event)=>this.UserOpen(user.id) } ></i>   
-           <Avatar className='avatar' name={user.username} />
-           <div className="links">
-           <a href={user.facebookProfile} target="_blank" ><Button circular color="facebook" icon="facebook" style={{display: user.facebookProfile === '' ? 'none' : 'inline'}} /></a>
-           <a href={user.twitterProfile} target="_blank" ><Button circular color="twitter" icon="twitter" style={{display: user.twitterProfile === '' ? 'none' : 'inline'}} /> </a>
-           <a href={user.instaProfile} target="_blank" > <Button circular color="instagram" icon="instagram" style={{display: user.instaProfile === '' ? 'none' : 'inline'}} /></a>
-           <a href={user.gitProfile} target="_blank"> <Button circular color="google plus" icon="google plus" style={{display: user.gitProfile === '' ? 'none' : 'inline'}} /></a>
-          </div>
-        </Card.Content>
-        <Card.Content>
-        <Card.Header>{user.username}</Card.Header>
-        <Link to={{
-            pathname: '/app/user/',
-            state: {
-              UserId: user.id
-            }
-          }}>
-        <i class="fas fa-id-card"></i>
-        </Link>
-          <Card.Description>
-            {user.email}
-          </Card.Description>
-        </Card.Content>
-      </Card>
-        </React.Fragment>
+        <UserCard user={user} UserBlock={this.UserBlock} UserOpen={this.UserOpen} MakeUserBoss={this.MakeUserBoss} UnMakeUserBoss={this.UnMakeUserBoss} />
         );
         return(
             userList
@@ -119,34 +230,7 @@ class Users extends Component{
 
     listUserseven(){
         let userList = this.state.usersRight.map((user)=>
-        <React.Fragment>
-        <Card className='user-card'>
-        <Card.Content className='avatar-box'>
-        <i class="fa fa-unlock-alt"></i>
-           <Avatar className='avatar' name={user.username} />
-           <div className="links">
-           <a href={user.facebookProfile} target="_blank" ><Button circular color="facebook" icon="facebook" style={{display: user.facebookProfile === '' ? 'none' : 'inline'}} /></a>
-           <a href={user.twitterProfile} target="_blank" ><Button circular color="twitter" icon="twitter" style={{display: user.twitterProfile === '' ? 'none' : 'inline'}} /> </a>
-           <a href={user.instaProfile} target="_blank" > <Button circular color="instagram" icon="instagram" style={{display: user.instaProfile === '' ? 'none' : 'inline'}} /></a>
-           <a href={user.gitProfile} target="_blank"> <Button circular color="google plus" icon="google plus" style={{display: user.gitProfile === '' ? 'none' : 'inline'}} /></a>
-          </div>
-        </Card.Content>
-        <Card.Content>
-        <Card.Header>{user.username}</Card.Header>
-        <Link to={{
-            pathname: '/user/',
-            state: {
-              UserId: user.id
-            }
-          }}>
-        <i class="fas fa-id-card"></i>
-        </Link>
-          <Card.Description>
-            {user.email}
-          </Card.Description>
-        </Card.Content>
-      </Card>
-      </React.Fragment>
+        <UserCard user={user} UserBlock={this.UserBlock} UserOpen={this.UserOpen} MakeUserBoss={this.MakeUserBoss} UnMakeUserBoss={this.UnMakeUserBoss} />
         );
         return(
             userList

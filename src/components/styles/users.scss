@@ -13,23 +13,24 @@
     .user-card{
         height: 300px !important;
         width: 400px !important;
-        .fa-unlock-alt{
+        .fa-pen{
             position: absolute;
             right: 30px;
             top: 30px;
-            font-size: 30px;
+            font-size: 24px;
+            color: white;
             &:hover{
-                transform: scale(1.1);
+                transform: scale(1.2);
                 cursor: pointer;
             }
         }
-        .fa-lock{
+        .fa-times{
             position: absolute;
             right: 30px;
             top: 30px;
             font-size: 30px;
             &:hover{
-                transform: scale(1.1);
+                transform: scale(1.2);
                 cursor: pointer;
             }   
         }
@@ -47,6 +48,79 @@
             .avatar{
                 width: 100% !important  ;
                 height: 100% !important;
+            }
+            .flex-box{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-evenly;
+                .boss{
+                    border-radius: 50%;
+                    height: 100px;
+                    width: 100px;
+                    margin-top: 14%;
+                    border: 2px solid red;
+                    .fa-crown{
+                       font-size: 30px;
+                       color: red;
+                       position: relative;
+                       left: 31%;
+                       top: 33%;
+                    }
+                    &:hover{
+                        transform: scale(1.1);
+                        cursor: pointer;
+                    }
+                    
+                }
+                .boss-acitve{
+                    border-radius: 50%;
+                    height: 100px;
+                    width: 100px;
+                    margin-top: 14%;
+                    border: 2px solid red;
+                    background-color: red;
+                    .fa-crown{
+                       font-size: 30px;
+                       color: white;
+                       position: relative;
+                       left: 31%;
+                       top: 33%;
+                    }
+                    
+                }
+                .block{
+                    border-radius: 50%;
+                    height: 100px;
+                    width: 100px;
+                    margin-top: 14%;
+                    border: 2px solid red;
+                    .fa-unlock{
+                       font-size: 30px;
+                       color: red;
+                       position: relative;
+                       left: 35%;
+                       top: 33%;
+                    }
+                    &:hover{
+                        transform: scale(1.1);
+                        cursor: pointer;
+                    }
+                }
+                .block-active{
+                    border-radius: 50%;
+                    height: 100px;
+                    width: 100px;
+                    margin-top: 14%;
+                    border: 2px solid red;
+                    background-color: red;
+                    .fa-lock{
+                       font-size: 30px;
+                       color: white;
+                       position: relative;
+                       left: 35%;
+                       top: 33%;
+                    }   
+                }
             }
         }
     }
