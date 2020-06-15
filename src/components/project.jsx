@@ -111,7 +111,7 @@ class Project extends Component{
                type: '',
                status: 'P',
                creater: parseInt(sessionStorage.getItem('UserId')),
-               project: this.props.location.state.ProjectId,
+               project: parseInt(this.props.location.state.ProjectId),
              },
              issueError: {
                title: '',
@@ -266,6 +266,7 @@ class Project extends Component{
     }
 
     async createIssue(data){
+      console.log(data)
       let response = await fetch('http://127.0.0.1:8000/issues/',{
         method: 'POST',
         body: data,
@@ -540,7 +541,7 @@ class Project extends Component{
             <Card className='card'> 
              <Card.Content className='info'>
         <Card.Header>{this.state.project.title}</Card.Header>
-               <Card.Description >
+               <Card.Description className='project-detail-desc' >
                <div dangerouslySetInnerHTML={{__html: this.state.project.desc}} />
                </Card.Description>
              <a href={this.state.project.gitLink} target="_blank"  ><img src={github} alt='gitlink' className='gitlink' style={{display: this.state.project.gitLink === '' ? 'none' : 'inline'}} /></a>
@@ -606,7 +607,7 @@ class Project extends Component{
 
 
          <div className="add">
-         <i style={{display: members.includes(parseInt(sessionStorage.getItem('UserId'))) ? 'block' : 'none'}} class="fas fa-plus" onClick={this.show('blurring')} ></i>
+         <i style={{display: members.includes(parseInt(sessionStorage.getItem('UserId'))) ? 'block' : 'none'}} class="fas fa-plus" onClick={this.show(true)} ></i>
          </div>
 
          <Card className='members'>

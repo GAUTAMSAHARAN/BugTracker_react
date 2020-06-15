@@ -12,7 +12,7 @@ import {
     Modal,
   } from "semantic-ui-react";
 import edit from './images/edit.png';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Background from './images/options.jpg';
 import moment from 'moment';
 import App from './editor';
@@ -102,7 +102,6 @@ class Issue extends Component{
          update: [],
          updateError: {
            title: '',
-           wiki: '',
          },
          option: false,
          form: false,
@@ -112,6 +111,7 @@ class Issue extends Component{
            first: true,
          },
          commentForm: false,
+         deleteDone: false,
       }
       this.statusUpdateRequest = this.statusUpdateRequest.bind(this)
     }
@@ -124,54 +124,58 @@ class Issue extends Component{
           'Authorization': `Token ${sessionStorage.getItem('token')}`,  
          },
        })
-        .then(res => res.json())
-        .then(results => {
-             this.setState({
-               issue: results,
-               update: results,
-               values: { ...this.state.values, issues: results.id},
-             })
-             switch(results.status){
-              case "P":
+        .then(async response => {
+          let results = await response.json()
+          if(response.status==200){
+            this.setState({
+              issue: results,
+              update: results,
+              values: { ...this.state.values, issues: results.id},
+            })
+            switch(results.status){
+             case "P":
+               this.setState({
+                 active2: 'pending'
+               }) 
+                  break
+             case "T":
                 this.setState({
-                  active2: 'pending'
-                }) 
-                   break
-              case "T":
-                 this.setState({
-                   active2: 'to be discussed'
-                 })
-                 break
-              case "R":
-                this.setState({
-                  active2: 'resolved'
-                }) 
-                 break
-             default:
-              this.setState({
-                active2: 'pending'
-              }) 
-                 break
-          }
-          switch(results.type){
-            case "FRONT":
-              this.setState({
-                active1: 'front',
-              })
-              break
-            case "BACK":
-              this.setState({
-                active1: 'back',
-              })
-              break
+                  active2: 'to be discussed'
+                })
+                break
+             case "R":
+               this.setState({
+                 active2: 'resolved'
+               }) 
+                break
             default:
-              this.setState({
-                active1: 'front'
-              })
-              break
+             this.setState({
+               active2: 'pending'
+             }) 
+                break
+         }
+         switch(results.type){
+           case "FRONT":
+             this.setState({
+               active1: 'front',
+             })
+             break
+           case "BACK":
+             this.setState({
+               active1: 'back',
+             })
+             break
+           default:
+             this.setState({
+               active1: 'front'
+             })
+             break
+         }
           }
-
         })
+        .catch(error => {
+          console.error('There was an error!', error);
+          });
 
         fetch(`http://127.0.0.1:8000/issues/${IssueId}/comments/`,{
           headers: {
@@ -179,12 +183,17 @@ class Issue extends Component{
             'Authorization': `Token ${sessionStorage.getItem('token')}`,  
            },
         })
-        .then(res=>res.json())
-        .then(results=>{
-          this.setState({
-            IssueComments: results,
-            updateComment: results,
-          })
+        .then(async response => {
+            let results =  await response.json()
+            if(response.status == 200){
+              this.setState({
+                IssueComments: results,
+                updateComment: results,
+              })
+            }
+        })
+        .catch(error=>{
+          console.error('There was an error!', error);
         })
     }
 
@@ -250,8 +259,16 @@ class Issue extends Component{
         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
       }
      })
-     .then(res => res.text()) // or res.json()
-     .then(res => console.log(res))
+     .then(async response => {
+         if(response.status == 204 || response.status ==202){
+             this.setState(({
+               deleteDone: true,
+             }))
+         }
+     })// or res.json()
+     .catch(error=>{
+       console.error('There is an error!', error)
+     })
   }
     
     onUpdate = e => {
@@ -267,6 +284,7 @@ class Issue extends Component{
     }
 
    async updateIssue(){
+          console.log(this.state.update)
           let data = JSON.stringify(this.state.update)
           let IssueId  = this.state.issue.id
           const response = await fetch(`http://127.0.0.1:8000/issues/${IssueId}/`,{
@@ -277,9 +295,12 @@ class Issue extends Component{
              'Authorization': `Token ${sessionStorage.getItem('token')}`,  
             },
           });
-          this.setState({
-            issue: this.state.update
-          })
+          if(response.status == 200){
+            this.setState({
+              issue: this.state.update
+            })
+          }
+          console.log(response)
           this.formClose()
     }
 
@@ -353,9 +374,13 @@ class Issue extends Component{
          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
         },
        })
-       this.setState({
-         issue: this.state.update
-       })
+       if(response.status == 200){
+         this.setState({
+           issue: this.state.update
+         })
+       }else{
+         console.log(response)
+       }
     }
 
     async statusUpdateRequest(data){
@@ -368,10 +393,13 @@ class Issue extends Component{
         'Authorization': `Token ${sessionStorage.getItem('token')}`,  
        },
       })
-      console.log(response)
-      this.setState({
-        issue: this.state.update
-      })
+      if(response.status == 200){
+        this.setState({
+          issue: this.state.update
+        })
+      }else{        
+        console.log(response)
+      }
     }
 
     async statusUpdate(string){
@@ -409,9 +437,6 @@ class Issue extends Component{
       this.setState({
         update: {...this.state.update, wiki: content}
       })
-      this.setState({
-        updateError: {...this.state.updateError, wiki: content.length > 500 ? 'wiki must be less than 500 characters.' : ''}
-      })
     }
 
     handleCommentCreate = (content) => {
@@ -423,6 +448,8 @@ class Issue extends Component{
     render(){        
         return(
           <React.Fragment>
+            { this.state.deleteDone ? (<Redirect push to={{ pathname: '/app/project',
+                                                            state: { ProjectId: this.state.issue.project }}} />) : null }
           <Container className='issue-box'>
           <Header as='h2'>Issues</Header>
           <Divider section /> 

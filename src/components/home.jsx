@@ -3,7 +3,7 @@ import './styles/home.scss';
 import { Container, Header, Divider, Button, Segment, Card, CardContent } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-
+import LargePlaceHolder from './largeplaceholder';
 
 class IssueCard extends Component{
     constructor(props){
@@ -77,7 +77,7 @@ class Home extends Component{
         super(props);
 
         this.state = {
-            issues: [],
+            issues: null,
             type: 'latest',
             IsloggedIn: sessionStorage.getItem('IsLoggedIn'),
         }
@@ -134,9 +134,24 @@ class Home extends Component{
     }
 
     IssueList() {
-          let listIssues = this.state.issues.map((issue) => 
-           <IssueCard issue={issue} />
-        );
+        let listIssues = ''
+        if(this.state.issues == null){
+          listIssues =  <Container className='placeholder-container'>
+                           <LargePlaceHolder />
+                           <LargePlaceHolder />
+                           <LargePlaceHolder />
+                           <LargePlaceHolder />
+                           <LargePlaceHolder />
+                           </Container>
+        }else{
+          if(this.state.issues.length == 0){
+            listIssues = 'There are no Projects yet'
+         }else{
+            listIssues = this.state.issues.map((issue) => 
+            <IssueCard issue={issue} />
+         );
+         }
+        } 
         return(
             listIssues
         );

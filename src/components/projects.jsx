@@ -194,8 +194,8 @@ class Projects extends Component {
       Projects: null,
       type: "latest",
       currentUrl: 'http://127.0.0.1:8000/projects/?page=1',
-      code: '',
       count: '',
+      code: '',
     };
     this.sendData = this.sendData.bind(this);
     this.currentUrl = this.currentUrl.bind(this);

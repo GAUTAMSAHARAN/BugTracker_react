@@ -296,6 +296,9 @@
 }
 .description{
     font-size: 18px !important;
+    overflow-y: scroll !important;
+    overflow-x: scroll !important;
+    scrollbar-width: none !important;
 }
 .large{
     height: fit-content !important;
@@ -343,7 +346,8 @@
 }
 .issue-create-button{
     position: absolute !important;
-    bottom: -85px;
+    bottom: -15px;
+    right: -5px;
     background-color: red !important;
 }
 

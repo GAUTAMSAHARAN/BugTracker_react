@@ -3,6 +3,10 @@ import './styles/users.scss';
 import { Container, Header, Divider, Card, Icon, Segment, Button, CardContent } from 'semantic-ui-react';
 import Avatar from 'react-avatar';
 import { Link } from 'react-router-dom';
+import PaginationCard from "./pagination";
+import Pluralize from 'react-pluralize';
+import LargePlaceHolder from './largeplaceholder';
+import SmallPlaceHolder from './smallplaceholder';
 
 class UserCard extends Component{
      
@@ -107,15 +111,17 @@ class Users extends Component{
        super(props);
        this.state = {
            users: [],
-           usersLeft: [],
-           usersRight: [],
+           usersLeft: null,
+           usersRight: null,
            Boss: false,
            value: {
              disable: false,
            },
            value2: {
              boss: false,
-           }
+           },
+           currentUrl: 'http://127.0.0.1:8000/users/?page=1',
+           count: '',
        }
        this.UserBlock = this.UserBlock.bind(this)
        this.UserOpen = this.UserOpen.bind(this)
@@ -126,24 +132,28 @@ class Users extends Component{
     componentDidMount(){
       console.log(this.state.value.disable)
 
-        fetch('http://127.0.0.1:8000/users/',{
+        fetch('http://127.0.0.1:8000/users/?page=1',{
           headers: {
             "Content-type": "application/json; charset=UTF-8",
             'Authorization': `Token ${sessionStorage.getItem('token')}`,  
            },
         })
-         .then(res=>res.json())
-         .then(results => {
-             results = results.results
-             console.log(results)
-             this.setState({
-                 users: results,
-                 usersLeft: results.filter(user => user.id%2!=0),
-                 usersRight: results.filter(user => user.id%2==0)
-             })
-             console.log(this.state.users);
-             console.log(this.state.usersLeft);
-             console.log(this.state.usersRight);
+         .then(async response=>{
+              let results = await response.json()
+              this.setState({
+                count: results.count,
+              })
+              results = results.results
+              if(response.status == 200){
+                this.setState({
+                    users: results,
+                    usersLeft: results.filter(user => user.id%2!=0),
+                    usersRight: results.filter(user => user.id%2==0),
+                })
+              }
+         })
+         .catch(error=>{
+           console.error('There are some error', error);
          })
     }
 
@@ -221,21 +231,58 @@ class Users extends Component{
     }
 
     listUsersodd(){
-        let userList = this.state.usersLeft.map((user)=>
-        <UserCard user={user} UserBlock={this.UserBlock} UserOpen={this.UserOpen} MakeUserBoss={this.MakeUserBoss} UnMakeUserBoss={this.UnMakeUserBoss} />
-        );
+        let userList = ''
+        if(this.state.usersLeft == null){
+          userList =  <Container className='placeholder-container'>
+                           <SmallPlaceHolder />
+                           <SmallPlaceHolder />
+                           <SmallPlaceHolder />
+                           <SmallPlaceHolder />
+                           <SmallPlaceHolder />
+                           </Container>
+        }else{
+          if(this.state.usersLeft.length == 0){
+            userList = 'There are no Projects yet'
+         }else{
+          userList = this.state.usersLeft.map((user)=>
+          <UserCard user={user} UserBlock={this.UserBlock} UserOpen={this.UserOpen} MakeUserBoss={this.MakeUserBoss} UnMakeUserBoss={this.UnMakeUserBoss} />
+          );
+         }
+        } 
         return(
             userList
         )
     }
 
     listUserseven(){
-        let userList = this.state.usersRight.map((user)=>
+
+      let userList = ''
+      if(this.state.usersRight == null){
+        userList = ''
+      }else{
+        if(this.state.usersRight.length == 0){
+          userList = 'There are no Projects yet'
+       }else{
+        userList = this.state.usersRight.map((user)=>
         <UserCard user={user} UserBlock={this.UserBlock} UserOpen={this.UserOpen} MakeUserBoss={this.MakeUserBoss} UnMakeUserBoss={this.UnMakeUserBoss} />
         );
+       }
+      } 
         return(
             userList
         )
+    }
+
+    sendData(data){
+      this.setState({
+       Projects: data,
+      })
+    }
+  
+    currentUrl(data){
+     this.setState({
+       currentUrl: data,
+     })
     }
 
     render(){
@@ -244,6 +291,9 @@ class Users extends Component{
 
             <Container className='home-box'>
             <Header as='h2'>Users</Header>
+            <div className='pagination'>
+            <PaginationCard sendData={this.sendData} url={this.state.currentUrl} currentUrl={this.currentUrl} count={this.state.count} />
+            </div>
             <Divider section />
             <div className="box">
             <div className='left-card-box'>
