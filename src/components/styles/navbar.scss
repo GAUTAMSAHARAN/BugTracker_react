@@ -17,3 +17,72 @@
         font-size: 18px;
     }
 }
+
+.add-button{
+    background-color: red !important;
+}
+
+.option-box{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    height: 90px;
+    width: 300px;
+    top: 40px;
+    right: -15px;
+    align-items: center;
+    justify-content: space-evenly;
+    z-index: 2;
+    .logout{
+        background-color: red;
+        border-radius: 50%;
+        height: 60px;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .fa-sign-out-alt{
+          color: white;
+          font-size: 20px;
+        }
+        &:hover{
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    }
+    .darktheme{
+        background-color: white;
+        border: 2px solid red;
+        border-radius: 50%;
+        height: 60px;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .fa-moon{
+          color: red;
+          font-size: 20px;
+        }
+        &:hover{
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    }
+    .user{
+        background-color: red;
+        border-radius: 50%;
+        height: 60px;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .fa-user{
+          color: white;
+          font-size: 20px;
+        }
+        &:hover{
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+    }
+}

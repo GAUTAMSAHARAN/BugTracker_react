@@ -10,9 +10,10 @@ import Users from './users';
 import GetTokken from './getTokken';
 import LogIn from './login';
 import Profile from './profile';
-import { Container } from 'semantic-ui-react';
+import { Container, Button } from 'semantic-ui-react';
 import './styles/grid.scss';
 import MyPage from './mypage';
+import NotFound from './404notfound';
 
 
 const ROUTES = [
@@ -73,7 +74,7 @@ const ROUTES = [
         ]
     }
 ]
-export default ROUTES;
+export { ROUTES };
 
 
 function RouteWithSubRoutes(route) {
@@ -86,13 +87,33 @@ function RouteWithSubRoutes(route) {
     );
   }
 
-export function RenderRoutes({ routes }) {
-    return (
+// export function RenderRoutes({ routes, hide }) {  
+//   return (
+//       <Switch>
+//         {routes.map((route, i) => {
+//           return <RouteWithSubRoutes key={route.key} {...route} />;
+//         })}
+//         <NotFound hide={hide()} />
+//         {/* <Route component={NotFound} /> */}
+//       </Switch>
+//     );
+//   }
+
+class RenderRoutes extends Component{
+
+  render(){
+    const { routes } = this.props
+    return(
+      <React.Fragment>
       <Switch>
-        {routes.map((route, i) => {
-          return <RouteWithSubRoutes key={route.key} {...route} />;
-        })}
-        <Route component={() => <h1>Not Found!</h1>} />
-      </Switch>
-    );
+      {routes.map((route, i) => {
+        return <RouteWithSubRoutes key={route.key} {...route} />;
+      })}
+      <NotFound hide={this.props.hideMenu} />
+a     </Switch>  
+      </React.Fragment>
+    )
   }
+}
+
+export default RenderRoutes;

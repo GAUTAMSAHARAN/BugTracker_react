@@ -3,7 +3,7 @@ import Navbar from './navbar';
 import MenuTab from './menu';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './styles/grid.scss';
-import ROUTES, { RenderRoutes } from "./routes";
+import RenderRoutes, {ROUTES} from "./paths";
 import pagination from './pagination';
 
 class Router extends Component{
@@ -23,6 +23,7 @@ class Router extends Component{
         console.log('hello')
     }
 
+
     render(){
         return(
             <BrowserRouter>
@@ -31,20 +32,8 @@ class Router extends Component{
             <div style={{display: this.state.on ? 'block' : 'none'}} >
             <MenuTab />
             </div>
-            {/* <Switch>
-                <Route path='/home'component={Home} />
-                <Route exact path='/projects' component={Projects} />
-                <Route exact path='/users' component={Users} />
-                <Route exact path='/user/' component={Profile} />
-                <Route exact path='/project/' component={Project} />
-                <Route exact path='/issue/' component={Issue} />
-                <Route exact path='/getTokken' component={GetTokken}  />
-                <Route path='/login/' component={LogIn} />
-                <Route path='/mypage/' component={MyPage} />
-            </Switch> */}
             <div className='component'>
-            {/* <pagination /> */}
-            <RenderRoutes routes={ROUTES} />
+            <RenderRoutes hideMenu={this.hideMenu} routes={ROUTES} />
             </div>
             </div>
             </BrowserRouter>
@@ -53,3 +42,5 @@ class Router extends Component{
 }
 
 export default Router;
+
+

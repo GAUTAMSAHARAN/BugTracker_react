@@ -38,12 +38,11 @@ class Profile extends Component {
         socailLinkForm: false,
       },
       emailConfirmation: '',
-    };
+    };  
   }
 
   componentDidMount(){
     const { UserId } = this.props.location.state
-    console.log(UserId);
     fetch(`http://127.0.0.1:8000/users/${UserId}/`,{
       headers: {
         "Content-type": "application/json; charset=UTF-8",

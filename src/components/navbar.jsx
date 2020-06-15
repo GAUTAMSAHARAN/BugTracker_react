@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { Input, Icon, Menu, Dropdown  } from 'semantic-ui-react';
 import './styles/navbar.scss';
+import { Link } from 'react-router-dom';
+import { ProjectForm } from './projects';
+import { Redirect } from 'react-router';
 
+  
 
 //options for the dropdown menu
 const options = [
@@ -16,11 +20,18 @@ class Navbar extends Component {
         super(props);
 
         this.state={
-            activeItem: 'browser'
+            option: false,
         }
+
+        this.showOptions = this.showOptions.bind(this)
     }
 
-    handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+    showOptions(){
+      this.setState({
+        option: this.state.option ? false : true,
+      })
+    }
+
 
     render(){
         const { activeItem } = this.state
@@ -34,14 +45,17 @@ class Navbar extends Component {
         >
           <i class="fas fa-bars"></i>
         </Menu.Item>
-
+         
+        <Link 
+           to='/app'
+        >
         <Menu.Item
           name='home'
           active={activeItem === 'home'}
-          onClick={this.handleItemClick}
         >
           <i class="fas fa-home"></i>
         </Menu.Item>
+        </Link>
 
         <Menu.Item>
           <Input className='icon' id='search' icon='search' placeholder='Search...' />
@@ -49,21 +63,38 @@ class Navbar extends Component {
 
          <Menu.Item position='right'
           name='home'
-          active={activeItem === 'home'}
-          onClick={this.handleItemClick}
          >
-          <i class="fas fa-plus"></i>
+          <ProjectForm />
         </Menu.Item>
 
         <Menu.Item 
           name='home'
-          active={activeItem === 'home'}
-          onClick={this.handleItemClick}
+          onClick={this.showOptions}
          >
           <i class="fas fa-cog"></i>
         </Menu.Item>
 
       </Menu>
+
+      <div className='option-box' style={{visibility: this.state.option ? 'visible' : 'hidden'}} >
+      <Link to={{
+        pathname: '/app/user/',
+        state: {
+          UserId: parseInt(sessionStorage.getItem('UserId'))
+        }
+      }}
+        >
+      <div className="user">
+      <i class="fas fa-user"></i>
+      </div>
+      </Link>
+      <div className="darktheme">
+      <i class="fas fa-moon"></i>
+      </div>
+      <div className="logout">
+      <i class="fas fa-sign-out-alt"></i>
+      </div>
+      </div>
          </React.Fragment>
         )
     }

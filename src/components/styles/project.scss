@@ -160,7 +160,7 @@
                 height: 40px;
                 width: 40px;
                 position: absolute;
-                top: -50px;
+                top: -90px;
                 right: 20px;
                 background-color: black;
                 display: flex;
@@ -180,7 +180,7 @@
                 height: 40px;
                 width: 40px;
                 position: absolute;
-                top: -50px;
+                top: -90px;
                 right: 80px;
                 background-color: black;
                 display: flex;
@@ -200,7 +200,7 @@
                 height: 40px;
                 width: 40px;
                 position: absolute;
-                top: -50px;
+                top: -90px;
                 right: 140px;
                 background-color: black;
                 display: flex;
@@ -345,4 +345,15 @@
     position: absolute !important;
     bottom: -85px;
     background-color: red !important;
+}
+
+.empty-issues{
+    background-color: #FFF4D1 !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    .content{
+        font-weight: bolder;
+    }
 }

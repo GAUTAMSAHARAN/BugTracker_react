@@ -12,6 +12,7 @@ class UserCard extends Component{
          editOpen: false,
          block: this.props.user.disable,
          boss: this.props.user.boss,
+         admin: sessionStorage.getItem('admin')
        }
        this.openEdit = this.openEdit.bind(this)
      }
@@ -56,7 +57,7 @@ class UserCard extends Component{
          <React.Fragment>
         <Card className='user-card'>
         <Card.Content className='avatar-box' style={{display: this.state.editOpen ? 'none' : 'block'}}>
-           <i class="fa fa-pen" onClick={(event)=>this.openEdit()}></i>
+           <i class="fa fa-pen" style={{display: this.state.admin == 'true' ? 'inline' : 'none'}} onClick={(event)=>this.openEdit()}></i>
            <Link to={{
             pathname: '/app/user/',
             state: {

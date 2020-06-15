@@ -17,7 +17,8 @@ import {
     Checkbox,
     Search,
     Grid,
-    List
+    List,
+    Responsive
   } from "semantic-ui-react";
 import github from "./images/githubwhite.png";
 import edit from "./images/edit.png";
@@ -29,6 +30,8 @@ import { IssueCard } from './home';
 import { Redirect } from 'react-router'
 import Pluralize from 'react-pluralize';
 import LargePlaceHolder from './largeplaceholder';
+const axios = require('axios');
+
 
 
 const validGitUrlRegex = RegExp(
@@ -90,7 +93,7 @@ class Project extends Component{
              members: [],
              users: [],
              ProjectId: this.props.location.state.ProjectId,
-             projectIssues: [],
+             projectIssues: null,
              teamMembers: [],
              update: [],
              updateError: {
@@ -116,28 +119,25 @@ class Project extends Component{
              up: false,
              form: false,
              deleteMember: false,
+             redirect: false,
         }
         this.Show = this.Show.bind(this)
+        this.deleteProject = this.deleteProject.bind(this)
     }
 
-    componentDidMount(){
+   componentDidMount(){
       const { ProjectId } = this.props.location.state
-      fetch(`http://127.0.0.1:8000/projects/${ProjectId}/`,{
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
-         },
-      })
-       .then(res=> res.json())
-       .then(results=> {
-         this.setState({
-           project: results,
-           update: results,
-           members: results.memebers,
-         })
-         console.log(sessionStorage.getItem('UserId'))
-         console.log(this.state.members)
-       })
+      
+      axios.get(`http://127.0.0.1:8000/projects/${ProjectId}/`)
+      .then((response) => {
+        if(response.status == 200){
+          this.setState({
+            project: response.data,
+            update: response.data,
+            members: response.data.memebers,
+          })
+        }
+      });
 
        fetch(`http://127.0.0.1:8000/projects/${ProjectId}/issues/`, {
         headers: {
@@ -145,12 +145,17 @@ class Project extends Component{
           'Authorization': `Token ${sessionStorage.getItem('token')}`,  
          },
        })
-        .then(res => res.json())
-        .then(results => {
-          this.setState({
-            projectIssues: results,
-          })  
+        .then(async response => {
+          let data = await response.json()
+          if(response.status==200){
+            this.setState({
+              projectIssues: data,
+            })  
+          }
         })
+        .catch(error => {
+          console.error('There was an error!', error);
+          });
 
         fetch(`http://127.0.0.1:8000/projects/${ProjectId}/members/`,{
           headers: {
@@ -158,12 +163,18 @@ class Project extends Component{
             'Authorization': `Token ${sessionStorage.getItem('token')}`,  
            },
         })
-         .then(res=>res.json())
-         .then(results=> {
-           this.setState({
-             teamMembers: results,
-           })
+         .then(async response => {
+            let data = await response.json()
+            if(response.status==200){
+              this.setState({
+                teamMembers: data,
+              })
+            }
          })
+         .catch(error => {
+          console.error('There was an error!', error);
+          });
+
 
         fetch('http://127.0.0.1:8000/users/', {
           headers: {
@@ -171,12 +182,17 @@ class Project extends Component{
             'Authorization': `Token ${sessionStorage.getItem('token')}`,  
            },
         })
-        .then(res => res.json())
-        .then(results => {
-          results = results.results
-          this.setState({
-            users: results
-          })
+        .then(async response => {
+            let data = await response.json()
+            if(response.status ==200){
+              data = data.results
+              this.setState({
+                users: data
+              })
+            }
+        })
+        .catch(error => {
+          console.error('There was an error !', error);
         })
     }
 
@@ -196,17 +212,25 @@ class Project extends Component{
     IssueList(){
        let show = this.state.show
        let issueList = ''
-       if(this.state.projectIssues.length == 0){
-         issueList = <Container>
-                     <LargePlaceHolder />
-                     <LargePlaceHolder />
-                     <LargePlaceHolder />
-                     <LargePlaceHolder />
-                     </Container>
+       if(this.state.projectIssues == null){
+           issueList = <Container>
+                       <LargePlaceHolder />
+                       <LargePlaceHolder />
+                       <LargePlaceHolder />
+                       <LargePlaceHolder />
+                       </Container>
        }else{
-         issueList = this.state.projectIssues.map((issue)=>
-              <IssueCard issue={issue} />
-         );
+         if(this.state.projectIssues.length == 0){
+           issueList = <Card className='empty-issues'>
+              <Card.Content className='content'>
+                There are no issues yet.
+              </Card.Content>
+           </Card>
+         }else{
+           issueList = this.state.projectIssues.map((issue)=>
+                <IssueCard issue={issue} />
+           );
+         }
        }
        return(
          issueList
@@ -222,16 +246,20 @@ class Project extends Component{
           'Authorization': `Token ${sessionStorage.getItem('token')}`,  
         }
       })
-      .then(res => res.json())
-      .then(res=> console.log(res))
-      return(
-        <Redirect to='/app/projects' />
-      )
+      .then(async response => {
+        if(response.status==200 || response.status==204 || response.status==202){
+           console.log('hello')
+           this.setState({
+             redirect: true,
+           })
+        }else{
+          console.log(response)
+        }
+      })
     }
 
     async createIssue(data){
-      console.log(data);
-      const response = await fetch('http://127.0.0.1:8000/issues/',{
+      let response = await fetch('http://127.0.0.1:8000/issues/',{
         method: 'POST',
         body: data,
         headers: {
@@ -239,7 +267,14 @@ class Project extends Component{
          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
         },
       });
-      console.log(response);
+      if(response.status == 201){
+       response = await response.json()
+       this.setState({
+         projectIssues: [response, ...this.state.projectIssues],
+       })
+      }else{
+        console.log(response)
+      }
  }
 
     onChange = e => {
@@ -334,10 +369,9 @@ class Project extends Component{
     }
   }
 
-    updateProject(){
+    async updateProject(){
       let data = JSON.stringify(this.state.update)
-      console.log(data)
-      let response = fetch(`http://127.0.0.1:8000/projects/${this.state.project.id}/`,{
+      let response = await fetch(`http://127.0.0.1:8000/projects/${this.state.project.id}/`,{
         method: 'PUT',
         body: data,
         headers: {
@@ -345,10 +379,13 @@ class Project extends Component{
          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
         },
       })
-      this.setState({
-        project: this.state.update
-      })
-      console.log(response);
+      if(response.status == 201 || response.status==200){
+        this.setState({
+          project: this.state.update
+        })
+      }else{
+        console.log(response);
+      }
       this.up()
       this.closeForm()
     }
@@ -476,6 +513,7 @@ class Project extends Component{
 
         return(
             <Container className="project-box">
+            { this.state.redirect ? (<Redirect push to="/app/projects"/>) : null }
             <Header as="h2">Projects</Header>
             <Divider section />
 
