@@ -33,6 +33,9 @@ class PaginationCard extends Component{
         }else{
           totalPages = Math.trunc(count/10) + 1 
         }
+        if(count == 0){
+          return null
+        }
         return(
             <Pagination
             boundaryRange={0}

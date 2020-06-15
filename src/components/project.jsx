@@ -30,6 +30,7 @@ import { IssueCard } from './home';
 import { Redirect } from 'react-router'
 import Pluralize from 'react-pluralize';
 import LargePlaceHolder from './largeplaceholder';
+import PaginationCard from './pagination';
 const axios = require('axios');
 
 
@@ -120,9 +121,13 @@ class Project extends Component{
              form: false,
              deleteMember: false,
              redirect: false,
+             currentUrl: `http://127.0.0.1:8000/issues/?page=1&important=&creater=&type=&status=&project=${this.props.location.state.ProjectId}`,
+             count: '',
         }
         this.Show = this.Show.bind(this)
         this.deleteProject = this.deleteProject.bind(this)
+        this.sendData = this.sendData.bind(this)
+        this.currentUrl = this.currentUrl.bind(this)
     }
 
    componentDidMount(){
@@ -139,7 +144,7 @@ class Project extends Component{
         }
       });
 
-       fetch(`http://127.0.0.1:8000/projects/${ProjectId}/issues/`, {
+       fetch(`http://127.0.0.1:8000/issues/?important=&creater=&type=&status=&project=${ProjectId}`, {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
           'Authorization': `Token ${sessionStorage.getItem('token')}`,  
@@ -148,8 +153,10 @@ class Project extends Component{
         .then(async response => {
           let data = await response.json()
           if(response.status==200){
+             let data1 = data.results
             this.setState({
-              projectIssues: data,
+              projectIssues: data1,
+              count: data.count
             })  
           }
         })
@@ -506,6 +513,18 @@ class Project extends Component{
         deleteMember: false,
       })
     }
+
+    sendData(data){
+      this.setState({
+       projectIssues: data,
+      })
+    }
+
+    currentUrl(data){
+      this.setState({
+        currentUrl: data,
+      })
+     }
  
  
     render(){
@@ -607,7 +626,9 @@ class Project extends Component{
 
          <Divider section className='divider' />
 
+
         <div className="issuelist">
+         <PaginationCard sendData={this.sendData} url={this.state.currentUrl} currentUrl={this.currentUrl} count={this.state.count} />
           {this.IssueList()}
         </div>
 
