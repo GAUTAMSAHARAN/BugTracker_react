@@ -12,6 +12,7 @@ import {
   Modal,    
   Form,
   Pagination,
+  Message
 } from "semantic-ui-react";
 import "./styles/projects.scss";
 import github from "./images/githubwhite.png";
@@ -57,8 +58,11 @@ class ProjectForm extends Component{
        },
      });
      if(response.status == 201){
+       this.props.success('You have successfully created a new project.')
        response = await response.json()
        this.props.updateList(response)
+    }else{
+      this.props.fail('There are some errors in creating new error. Try again later!')
     } 
      this.close()
     }
@@ -196,10 +200,16 @@ class Projects extends Component {
       currentUrl: 'http://127.0.0.1:8000/projects/?page=1',
       count: '',
       code: '',
+      success: false,
+      successMsg: '',
+      fail: false,
+      failMsg: '',
     };
     this.sendData = this.sendData.bind(this);
     this.currentUrl = this.currentUrl.bind(this);
     this.updateList = this.updateList.bind(this);
+    this.SuccessOn = this.SuccessOn.bind(this);
+    this.FailOn = this.FailOn.bind(this);
   }
 
   async componentDidMount() {
@@ -306,17 +316,48 @@ class Projects extends Component {
     await this.setState({
         Projects: [data, ...this.state.Projects],
     })
-    if(this.state.count >= 10){
-      await this.setState({
-        Projects: this.state.Projects.pop(),
-      })
-    }
   } 
+
+  SuccessOn(msg){
+    this.setState({
+      success: true, 
+      successMsg: msg,
+    })
+
+    setInterval(()=>{
+        this.setState({
+          success:false,
+        })
+    }, 3000)
+  }
+
+  FailOn(msg){
+    this.setState({
+      fail: true,
+      failMsg: msg,
+    })
+    setInterval(()=>{
+       this.setState({
+         success:false,
+       })
+    }, 3000)
+  }
 
   render() {
     return (
       <Container className="project-box">
-        <Header as="h2" className='projects-header'>Projects<ProjectForm updateList={this.updateList} /></Header>
+          <Message
+            style = {{display: this.state.success ? 'block' : 'none'}}
+            success
+            header={this.state.successMsg}
+          />
+            <Message 
+            negative
+            style={{display: this.state.fail ? 'block' : 'none'}}
+            >
+              <Message.Header>{this.state.failMsg}</Message.Header>
+           </Message>
+        <Header as="h2" className='projects-header'>Projects<ProjectForm success={this.SuccessOn} fail={this.FailOn} updateList={this.updateList} /></Header>
         <Divider section />
         <Segment className="segment">
           <Button.Group className="option-2">
@@ -341,6 +382,7 @@ class Projects extends Component {
         
         <PaginationCard sendData={this.sendData} url={this.state.currentUrl} currentUrl={this.currentUrl} count={this.state.count} />
         <Divider section />
+
                
       </Container>
     );

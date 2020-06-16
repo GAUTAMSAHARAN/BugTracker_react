@@ -18,7 +18,7 @@ import {
     Search,
     Grid,
     List,
-    Responsive
+    Message,
   } from "semantic-ui-react";
 import github from "./images/githubwhite.png";
 import edit from "./images/edit.png";
@@ -123,6 +123,10 @@ class Project extends Component{
              redirect: false,
              currentUrl: `http://127.0.0.1:8000/issues/?page=1&important=&creater=&type=&status=&project=${this.props.location.state.ProjectId}`,
              count: '',
+             success: false, 
+             successMsg: '',
+             fail: false,
+             failMsg: '',
         }
         this.Show = this.Show.bind(this)
         this.deleteProject = this.deleteProject.bind(this)
@@ -280,7 +284,9 @@ class Project extends Component{
        this.setState({
          projectIssues: [response, ...this.state.projectIssues],
        })
+       this.SuccessOn('New Issue is successfully created.')
       }else{
+        this.FailOn('There are some errors in creating new issue. Try again later!')
         console.log(response)
       }
  }
@@ -391,7 +397,9 @@ class Project extends Component{
         this.setState({
           project: this.state.update
         })
+        this.SuccessOn('Your Projet has been successfully updated.')
       }else{
+        this.FailOn('There are some errors in updating your project. Try again later!')
         console.log(response);
       }
       this.up()
@@ -526,6 +534,31 @@ class Project extends Component{
         currentUrl: data,
       })
      }
+
+     SuccessOn(msg){
+      this.setState({
+        success: true, 
+        successMsg: msg,
+      })
+  
+      setInterval(()=>{
+          this.setState({
+            success:false,
+          })
+      }, 3000)
+    }
+  
+    FailOn(msg){
+      this.setState({
+        fail: true,
+        failMsg: msg,
+      })
+      setInterval(()=>{
+         this.setState({
+           success:false,
+         })
+      }, 3000)
+    }
  
  
     render(){
@@ -534,6 +567,17 @@ class Project extends Component{
         return(
             <Container className="project-box">
             { this.state.redirect ? (<Redirect push to="/app/projects"/>) : null }
+            <Message
+            style = {{display: this.state.success ? 'block' : 'none'}}
+            success
+            header={this.state.successMsg}
+          />
+            <Message 
+            negative
+            style={{display: this.state.fail ? 'block' : 'none'}}
+            >
+              <Message.Header>{this.state.failMsg}</Message.Header>
+           </Message>
             <Header as="h2">Projects</Header>
             <Divider section />
 

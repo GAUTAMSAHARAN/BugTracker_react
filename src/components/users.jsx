@@ -291,7 +291,7 @@ class Users extends Component{
 
             <Container className='home-box'>
             <Header as='h2'>Users</Header>
-            <div className='pagination'>
+            <div className='pagination-user'>
             <PaginationCard sendData={this.sendData} url={this.state.currentUrl} currentUrl={this.currentUrl} count={this.state.count} />
             </div>
             <Divider section />

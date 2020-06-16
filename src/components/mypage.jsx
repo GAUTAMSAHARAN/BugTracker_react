@@ -37,6 +37,7 @@ class MyPage extends Component{
         })
          .then(res=>res.json())
          .then(results=>{
+           results = results.results
              this.setState({
                  project: results,
              })
@@ -50,6 +51,7 @@ class MyPage extends Component{
          })
           .then(res=>res.json())
           .then(results=>{
+            results = results.results
               this.setState({
                   issue: results,
               })
@@ -63,6 +65,8 @@ class MyPage extends Component{
           })
            .then(res=>res.json())
            .then(results => {
+            results = results.results
+
                this.setState({
                   comment: results,
                })

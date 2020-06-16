@@ -10,6 +10,7 @@ import {
     Icon,
     Form,
     Modal,
+    Message,
   } from "semantic-ui-react";
 import edit from './images/edit.png';
 import { Link, Redirect } from 'react-router-dom';
@@ -112,6 +113,10 @@ class Issue extends Component{
          },
          commentForm: false,
          deleteDone: false,
+         success: false,
+         successMsg: '',
+         fail: false,
+         failMsg: '',
       }
       this.statusUpdateRequest = this.statusUpdateRequest.bind(this)
     }
@@ -206,6 +211,9 @@ class Issue extends Component{
               'Authorization': `Token ${sessionStorage.getItem('token')}`,  
             }
           });
+          if(response.status == 200 || response.status == 201){
+             this.SuccessOn('your response has been successfully created.');
+          }
           console.log(data);
           console.log(response);
     }
@@ -299,6 +307,9 @@ class Issue extends Component{
             this.setState({
               issue: this.state.update
             })
+            this.SuccessOn('you have successfully updated your issue')
+          }else{
+            this.FailOn('There are some error while updating issue details.')
           }
           console.log(response)
           this.formClose()
@@ -344,9 +355,15 @@ class Issue extends Component{
          'Authorization': `Token ${sessionStorage.getItem('token')}`,  
         },
       });
-      this.setState({
-        issue: this.state.update
-      })
+      if(response.status == 200){
+        this.setState({
+          issue: this.state.update
+        })
+       this.SuccessOn('Issue has been updated successfully.')
+      }else{
+        this.FailOn('Error is occcured while updating issue')
+      }
+      this.CloseOption()
     }
 
     async typeUpdate(string){
@@ -378,10 +395,13 @@ class Issue extends Component{
          this.setState({
            issue: this.state.update
          })
+         this.SuccessOn('Issue type has been updated.')
        }else{
+         this.FailOn('Error Occur while updating. Try again later.')
          console.log(response)
        }
-    }
+       this.CloseOption()
+      }
 
     async statusUpdateRequest(data){
       let IssueId = this.state.issue.id
@@ -397,9 +417,12 @@ class Issue extends Component{
         this.setState({
           issue: this.state.update
         })
+        this.SuccessOn('Status of Issue is updated.')
       }else{        
+        this.FailOn('Error occur while updating.')
         console.log(response)
       }
+      this.CloseOption()
     }
 
     async statusUpdate(string){
@@ -431,6 +454,7 @@ class Issue extends Component{
       }
       let data = JSON.stringify(this.state.update)
       this.statusUpdateRequest(data)
+      this.CloseOption()
     }
 
     handleEditorUpdateIssue = (content) => {
@@ -444,6 +468,31 @@ class Issue extends Component{
         values: {...this.state.values, body: content}
       }) 
     }
+
+    SuccessOn(msg){
+      this.setState({
+        success: true, 
+        successMsg: msg,
+      })
+  
+      setInterval(()=>{
+          this.setState({
+            success:false,
+          })
+      }, 3000)
+    }
+  
+    FailOn(msg){
+      this.setState({
+        fail: true,
+        failMsg: msg,
+      })
+      setInterval(()=>{
+         this.setState({
+           success:false,
+         })
+      }, 3000)
+    }
      
     render(){        
         return(
@@ -451,6 +500,17 @@ class Issue extends Component{
             { this.state.deleteDone ? (<Redirect push to={{ pathname: '/app/project',
                                                             state: { ProjectId: this.state.issue.project }}} />) : null }
           <Container className='issue-box'>
+          <Message
+            style = {{display: this.state.success ? 'block' : 'none'}}
+            success
+            header={this.state.successMsg}
+          />
+          <Message 
+            negative
+            style={{display: this.state.fail ? 'block' : 'none'}}
+            >
+              <Message.Header>{this.state.failMsg}</Message.Header>
+           </Message>
           <Header as='h2'>Issues</Header>
           <Divider section /> 
           <div className="main-issue-box">
