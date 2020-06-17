@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './styles/users.scss';
-import { Container, Header, Divider, Card, Icon, Segment, Button, CardContent } from 'semantic-ui-react';
+import { Container, Header, Divider, Card, Icon, Segment, Button, CardContent, Message } from 'semantic-ui-react';
 import Avatar from 'react-avatar';
 import { Link } from 'react-router-dom';
 import PaginationCard from "./pagination";
@@ -31,28 +31,28 @@ class UserCard extends Component{
        this.setState({
          block: true, 
        })
-       this.props.UserBlock(this.props.user.id)
+       this.props.UserBlock(this.props.user.id, this.props.user.username)
      }
 
      unlock(){
        this.setState({
          block: false
        })
-       this.props.UserOpen(this.props.user.id)
+       this.props.UserOpen(this.props.user.id, this.props.user.username)
      }
 
      makeBoss(){
        this.setState({
          boss: true,
        })
-       this.props.MakeUserBoss(this.props.user.id)
+       this.props.MakeUserBoss(this.props.user.id, this.props.user.username)
      }
 
      unmakeBoss(){
        this.setState({
          boss: false
        })
-       this.props.UnMakeUserBoss(this.props.user.id)
+       this.props.UnMakeUserBoss(this.props.user.id, this.props.user.username)
      }
 
      render(){
@@ -122,6 +122,10 @@ class Users extends Component{
            },
            currentUrl: 'http://127.0.0.1:8000/users/?page=1',
            count: '',
+           success: false,
+           successMsg: '',
+           fail: false,
+           failMsg: '',
        }
        this.UserBlock = this.UserBlock.bind(this)
        this.UserOpen = this.UserOpen.bind(this)
@@ -157,7 +161,7 @@ class Users extends Component{
          })
     }
 
-    async UserBlock(id){
+    async UserBlock(id, name){
          await this.setState({
            value: {
              disable: true,
@@ -165,18 +169,23 @@ class Users extends Component{
          })
          console.log(this.state.value.disable)
          let data = JSON.stringify(this.state.value)
-         let response = fetch(`http://127.0.0.1:8000/users/${id}/`,{
+         let response = await fetch(`http://127.0.0.1:8000/users/${id}/`,{
           method: 'PATCH', body: data,
           headers: {
               "Content-type": "application/json; charset=UTF-8",
               'Authorization': `Token ${sessionStorage.getItem('token')}`,
           },
         })
-        console.log(response)
+        if(response.status == 200){
+          this.SuccessOn(`${name} is successfully disable from this webapp.`)
+        }else{
+          this.FailOn('Error occur in proccessing your request. Try again later!')
+        }
+
     
     }
 
-    async UserOpen(id){
+    async UserOpen(id, name){
       await this.setState({
          value: {
            disable: false,
@@ -184,17 +193,22 @@ class Users extends Component{
        })
      console.log(this.state.value.disable)
      let data = JSON.stringify(this.state.value)
-     let response = fetch(`http://127.0.0.1:8000/users/${id}/`,{
+     let response = await fetch(`http://127.0.0.1:8000/users/${id}/`,{
       method: 'PATCH', body: data,
       headers: {
           "Content-type": "application/json; charset=UTF-8",
           'Authorization': `Token ${sessionStorage.getItem('token')}`,
       },
     })
+    if(response.status==200){
+      this.SuccessOn(`${name} is now eligible for this webapp.`)
+    }else{
+      this.FailOn('Error occur in processing your request. Try again later!')
+    }
     console.log(response)
     }
 
-    async MakeUserBoss(id){
+    async MakeUserBoss(id, name){
       await this.setState({
         value2: {
           boss: false,
@@ -202,17 +216,22 @@ class Users extends Component{
       })
     console.log(this.state.value2.boss)
     let data = JSON.stringify(this.state.value2)
-    let response = fetch(`http://127.0.0.1:8000/users/${id}/`,{
+    let response = await fetch(`http://127.0.0.1:8000/users/${id}/`,{
      method: 'PATCH', body: data,
      headers: {
          "Content-type": "application/json; charset=UTF-8",
          'Authorization': `Token ${sessionStorage.getItem('token')}`,
      },
    })
+   if(response.status == 200){
+    this.SuccessOn(`${name} has been successfully become master.`)
+  }else{
+    this.FailOn('Error occur while proccessing your request. Try again later!')
+  }
    console.log(response)
     }
 
-    async UnMakeUserBoss(id){
+    async UnMakeUserBoss(id, name){
       await this.setState({
         value2: {
           boss: false,
@@ -220,13 +239,18 @@ class Users extends Component{
       })
     console.log(this.state.value2.boss)
     let data = JSON.stringify(this.state.value2)
-    let response = fetch(`http://127.0.0.1:8000/users/${id}/`,{
+    let response = await fetch(`http://127.0.0.1:8000/users/${id}/`,{
      method: 'PATCH', body: data,
      headers: {
          "Content-type": "application/json; charset=UTF-8",
          'Authorization': `Token ${sessionStorage.getItem('token')}`,
      },
    })
+   if(response==200){
+    this.SuccessOn(`${name} has been removed from master class.`)
+  }else{
+    this.FailOn('Error occur while proccessing your request. Try again later!')
+  }
    console.log(response)
     }
 
@@ -285,11 +309,47 @@ class Users extends Component{
      })
     }
 
+    SuccessOn(msg){
+      this.setState({
+        success: true, 
+        successMsg: msg,
+      })
+  
+      setInterval(()=>{
+          this.setState({
+            success:false,
+          })
+      }, 3000)
+    }
+  
+    FailOn(msg){
+      this.setState({
+        fail: true,
+        failMsg: msg,
+      })
+      setInterval(()=>{
+         this.setState({
+           success:false,
+         })
+      }, 3000)
+    }
+
     render(){
         return(
           <React.Fragment>
 
             <Container className='home-box'>
+            <Message
+            style = {{display: this.state.success ? 'block' : 'none'}}
+            success
+            header={this.state.successMsg}
+          />
+            <Message 
+            negative
+            style={{display: this.state.fail ? 'block' : 'none'}}
+            >
+              <Message.Header>{this.state.failMsg}</Message.Header>
+           </Message>
             <Header as='h2'>Users</Header>
             <div className='pagination-user'>
             <PaginationCard sendData={this.sendData} url={this.state.currentUrl} currentUrl={this.currentUrl} count={this.state.count} />

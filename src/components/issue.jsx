@@ -21,7 +21,7 @@ import Avatar from 'react-avatar';
 
 
 
-class CommentCard extends Component{
+class CommentCard extends Component{z
  
   constructor(props){
     super(props)
