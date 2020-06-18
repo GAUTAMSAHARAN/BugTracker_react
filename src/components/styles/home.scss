@@ -99,3 +99,19 @@
 .card-content-2{
     background-color: #FFF4D1 !important;
 }
+
+.button-home{
+    width: 105px !important;
+    height: 36px !important;
+}
+
+.empty-issue{
+    background-color: #FFF4D1 !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    .content{
+        font-weight: bolder;
+    }
+}

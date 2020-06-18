@@ -35,68 +35,72 @@ class Navbar extends Component {
 
     render(){
         const { activeItem } = this.state
-        return(
-         <React.Fragment>
-      <Menu icon className='navbar'>
-        <Menu.Item
-          name='bars'
-          active={activeItem === 'bars'}
-          onClick={this.props.hideMenu}
-        >
-          <i class="fas fa-bars"></i>
-        </Menu.Item>
-         
-        <Link 
-           to='/app'
-        >
-        <Menu.Item
-          name='home'
-          active={activeItem === 'home'}
-        >
-          <i class="fas fa-home"></i>
-        </Menu.Item>
+        if(sessionStorage.getItem('IsLoggedIn') == 'true'){
+          return(
+            <React.Fragment>
+        <Menu icon className='navbar'>
+          <Menu.Item
+            name='bars'
+            active={activeItem === 'bars'}
+            onClick={this.props.hideMenu}
+          >
+            <i class="fas fa-bars"></i>
+          </Menu.Item>
+           
+          <Link 
+             to='/app'
+          >
+          <Menu.Item
+            name='home'
+            active={activeItem === 'home'}
+          >
+            <i class="fas fa-home"></i>
+          </Menu.Item>
+          </Link>
+  
+          <Menu.Item>
+            <Input className='icon' id='search' icon='search' placeholder='Search...' />
+           </Menu.Item>
+  
+           <Menu.Item position='right'
+            name='home'
+           >
+            <ProjectForm />
+          </Menu.Item>
+  
+          <Menu.Item 
+            name='home'
+            onClick={this.showOptions}
+           >
+            <i class="fas fa-cog"></i>
+          </Menu.Item>
+  
+        </Menu>
+  
+        <div className='option-box' style={{visibility: this.state.option ? 'visible' : 'hidden'}} >
+        <Link to={{
+          pathname: '/app/user/',
+          state: {
+            UserId: parseInt(sessionStorage.getItem('UserId'))
+          }
+        }}
+          >
+        <div className="user">
+        <i class="fas fa-user"></i>
+        </div>
         </Link>
-
-        <Menu.Item>
-          <Input className='icon' id='search' icon='search' placeholder='Search...' />
-         </Menu.Item>
-
-         <Menu.Item position='right'
-          name='home'
-         >
-          <ProjectForm />
-        </Menu.Item>
-
-        <Menu.Item 
-          name='home'
-          onClick={this.showOptions}
-         >
-          <i class="fas fa-cog"></i>
-        </Menu.Item>
-
-      </Menu>
-
-      <div className='option-box' style={{visibility: this.state.option ? 'visible' : 'hidden'}} >
-      <Link to={{
-        pathname: '/app/user/',
-        state: {
-          UserId: parseInt(sessionStorage.getItem('UserId'))
+        <div className="darktheme">
+        <i class="fas fa-moon"></i>
+        </div>
+        <div className="logout">
+        <i class="fas fa-sign-out-alt"></i>
+        </div>
+        </div>
+           </React.Fragment>
+          )
+        }else{
+          return null
         }
-      }}
-        >
-      <div className="user">
-      <i class="fas fa-user"></i>
-      </div>
-      </Link>
-      <div className="darktheme">
-      <i class="fas fa-moon"></i>
-      </div>
-      <div className="logout">
-      <i class="fas fa-sign-out-alt"></i>
-      </div>
-      </div>
-         </React.Fragment>
-        )
     }
 }
 

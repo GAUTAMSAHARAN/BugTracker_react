@@ -80,13 +80,14 @@ class Home extends Component{
             issues: null,
             type: 'latest',
             IsloggedIn: sessionStorage.getItem('IsLoggedIn'),
+            currentUrl: 'http://127.0.0.1:8000/issues/?ordering=-upload_time',
         }
 
         this.UpdateIssue = this.UpdateIssue.bind(this)
     }
      
     componentDidMount(){
-         fetch('http://127.0.0.1:8000/issues/', {
+         fetch('http://127.0.0.1:8000/issues/?ordering=-upload_time', {
             headers: {
                 'Authorization': `Token ${sessionStorage.getItem('token')}`,
                },
@@ -103,19 +104,19 @@ class Home extends Component{
     
     UpdateIssue(string){
         let type = string
-        let base_url="http://127.0.0.1:8000/issues/"
+        let base_url="http://127.0.0.1:8000/issues/?ordering=-upload_time"
         switch(type){
             case "latest":
-               base_url += '?ordering=upload_time'
-               break
-            case "important":
-               base_url += '?important=true'
-               break
-            case "myissues":
                base_url += ''
                break
+            case "important":
+               base_url += '&important=true'
+               break
+            case "myissues":
+               base_url += `&important=&creater=${parseInt(sessionStorage.getItem("UserId"))}&type=&status=&project=`
+               break
            default: 
-               base_url += '?ordering=upload_time'
+               base_url += ''
                break
         }
         fetch(base_url,{
@@ -124,12 +125,18 @@ class Home extends Component{
                 'Authorization': `Token ${sessionStorage.getItem('token')}`,  
                },
         })
-         .then(res=>res.json())
-         .then(results=>{
-             this.setState({
-                 issues: results
-             })
-
+         .then(async response=>{
+             let results = await response.json()
+               results = results.results
+             if(response.status == 200){
+                 this.setState({
+                     issues: results,
+                     currentUrl: base_url,
+                 })
+             }
+         })
+         .catch(error=>{
+             console.error('Error occur in fetching some data. Try again later!')
          })
     }
 
@@ -145,7 +152,11 @@ class Home extends Component{
                            </Container>
         }else{
           if(this.state.issues.length == 0){
-            listIssues = 'There are no Projects yet'
+            listIssues = <Card fluid className='empty-issue' > 
+                         <Card.Content  className='content' >
+                         'There are no Issues yet'
+                         </Card.Content>
+                         </Card>
          }else{
             listIssues = this.state.issues.map((issue) => 
             <IssueCard issue={issue} />
@@ -167,6 +178,42 @@ class Home extends Component{
            this.UpdateIssue(string)
     }
 
+    updateStuff(string){
+        console.log('hello')
+        let url = this.state.currentUrl
+        switch(string){
+            case "FRONT":
+                url += '&type=FRONT'
+                break
+            case "BACK":
+                url += '&type=BACK'
+                break
+            default:
+                url += ''
+                break
+        }
+        fetch(url,{
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+               },
+        })
+         .then(async response=>{
+             let results = await response.json()
+               results = results.results
+             if(response.status == 200){
+                 this.setState({
+                     issues: results,
+                     currentUrl: url,
+                 })
+             }
+         })
+         .catch(error=>{
+             console.error('Error occur in fetching some data. Try again later!', error)
+         })
+
+    }
+
     render(){
         return(
             <Container className='home-box'>
@@ -174,15 +221,15 @@ class Home extends Component{
             <Divider section />
             <Segment className='segment'>
                   <div className="option-1">
-                 <Button color='red' basic>Frontend</Button>
-                 <Button color='blue' basic>Backend</Button>
+                 <Button color='red' onClick={(event)=>this.updateStuff('FRONT')}  >Frontend</Button>
+                 <Button color='orange' onClick={(event) => this.updateStuff('BACK')}  >Backend</Button>
                  </div>
                <Divider vertical ></Divider>
                <div className="option-2">
-                 <Button color='teal' position='right' basic onClick={(event)=> this.updateType('latest')}>Latest</Button>
-                 <Button color='blue'basic onClick={(event)=> this.updateType('myissues')}>MyIssues</Button>
-                 <Button color='green' basic>Tags</Button>
-                 <Button color='violet' basic onClick={(event) => this.updateType('important')}>Important</Button>
+                 <Button color='teal' className='button-home' position='right'  onClick={(event)=> this.updateType('latest')}>Latest</Button>
+                 <Button color='blue' className='button-home' onClick={(event)=> this.updateType('myissues')}>MyIssues</Button>
+                 <Button color='green' className='button-home' >Tags</Button>
+                 <Button color='violet' className='button-home' onClick={(event) => this.updateType('important')}>Important</Button>
                 </div>
             </Segment>
             <Divider section />

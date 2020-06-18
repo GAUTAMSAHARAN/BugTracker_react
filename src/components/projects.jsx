@@ -191,6 +191,8 @@ class ProjectCard extends Component{
   }
 }
 
+export {ProjectCard}
+
 class Projects extends Component {
   constructor(props) {
     super(props);
@@ -360,17 +362,17 @@ class Projects extends Component {
         <Header as="h2" className='projects-header'>Projects<ProjectForm success={this.SuccessOn} fail={this.FailOn} updateList={this.updateList} /></Header>
         <Divider section />
         <Segment className="segment">
-          <Button.Group className="option-2">
-            <Button color="teal" basic onClick={(event)=>this.updateProjects('latest')}>
+          <div className="option-2">
+            <Button color="teal" className='button-project'  onClick={(event)=>this.updateProjects('latest')}>
               Latest
             </Button>
-            <Button color="blue" basic onClick={(event)=>this.updateProjects("myprojects")}>
+            <Button color="orange" className='button-project' onClick={(event)=>this.updateProjects("myprojects")}>
               MyProjects
             </Button>
-            <Button color="green" basic onClick={(event)=>this.updateProjects("collabrated")}>
+            <Button color="red" className='button-project'  onClick={(event)=>this.updateProjects("collabrated")}>
               Collabrated
             </Button>
-          </Button.Group>
+            </div>
         </Segment>
         <Divider section />
 
@@ -389,7 +391,6 @@ class Projects extends Component {
   }
 }
 
-export { ProjectCard }
 export default Projects;
 
 
