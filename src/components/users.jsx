@@ -7,6 +7,7 @@ import PaginationCard from "./pagination";
 import Pluralize from 'react-pluralize';
 import LargePlaceHolder from './largeplaceholder';
 import SmallPlaceHolder from './smallplaceholder';
+import git from './images/githubblack.png';
 
 class UserCard extends Component{
      
@@ -74,7 +75,7 @@ class UserCard extends Component{
            <a href={user.facebookProfile} target="_blank" ><Button circular color="facebook" icon="facebook" style={{display: user.facebookProfile === '' ? 'none' : 'inline'}} /></a>
            <a href={user.twitterProfile} target="_blank" ><Button circular color="twitter" icon="twitter" style={{display: user.twitterProfile === '' ? 'none' : 'inline'}} /> </a>
            <a href={user.instaProfile} target="_blank" > <Button circular color="instagram" icon="instagram" style={{display: user.instaProfile === '' ? 'none' : 'inline'}} /></a>
-           <a href={user.gitProfile} target="_blank"> <Button circular color="google plus" icon="google plus" style={{display: user.gitProfile === '' ? 'none' : 'inline'}} /></a>
+           <a href={user.gitProfile} target="_blank"> <Button circular color="github" icon="github" style={{display: user.gitProfile === '' ? 'none' : 'inline'}} /></a>
           </div>
         </Card.Content>
         <CardContent className='avatar-box' style={{display: this.state.editOpen ? 'block' : 'none'}}>

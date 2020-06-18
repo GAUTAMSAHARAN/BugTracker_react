@@ -4,6 +4,21 @@
     margin-right: auto !important;
     margin-top: 40px !important;
     .project-container{
-        padding-left: 120px;
+        padding-left: 80px;
     }
+}
+
+.projects-box{
+    height: fit-content !important;
+    position: absolute !important;
+    padding: auto !important;
+                .card{
+                    position: relative !important;
+                    float: left !important;
+                    width: 400px !important;
+                }
+}
+
+.comment-box{
+    padding-left: 100px !important;
 }

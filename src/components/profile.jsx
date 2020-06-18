@@ -15,6 +15,7 @@ import {
 } from "semantic-ui-react";
 import edit from "./images/edit.png";
 import Avatar from 'react-avatar';
+import git from './images/githubblack.png';
 
 
 class Profile extends Component {
@@ -434,7 +435,7 @@ class Profile extends Component {
              <a href={this.state.profile.facebookProfile} target="_blank" ><Button circular color="facebook" icon="facebook" style={{display: this.state.profile.facebookProfile === '' ? 'none' : 'inline'}} /></a>
               <a href={this.state.profile.twitterProfile} target="_blank" ><Button circular color="twitter" icon="twitter" style={{display: this.state.profile.twitterProfile === '' ? 'none' : 'inline'}} /> </a>
               <a href={this.state.profile.instaProfile} target="_blank" > <Button circular color="instagram" icon="instagram" style={{display: this.state.profile.instaProfile === '' ? 'none' : 'inline'}} /></a>
-              <a href={this.state.profile.gitProfile} target="_blank"> <Button circular color="google plus" icon="google plus" style={{display: this.state.profile.gitProfile === '' ? 'none' : 'inline'}} /></a>
+              <a href={this.state.profile.gitProfile} target="_blank"> <Button circular color="github" icon="github" style={{display: this.state.profile.gitProfile === '' ? 'none' : 'inline'}} /></a>
              </div>
            </Segment>
            <div>
