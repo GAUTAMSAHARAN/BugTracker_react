@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
+import CookieService from './services/CookieService';
 import {
     Container,
     Header,
@@ -14,6 +15,7 @@ import {
     Dimmer,
     Loader
   } from "semantic-ui-react";
+
 const axios = require('axios');
 
 class LogIn extends Component{
@@ -27,16 +29,41 @@ class LogIn extends Component{
     }
 
     async componentDidMount(){
-       let url = window.location.href
-       let code = (url.match(/code=([^&]+)/) || [])[1]
+       let code = ''
 
-       await axios.post('http://127.0.0.1:8000/users/login/', { code: code }).then((res)=>{
-          if(res.data.token !== undefined){
-              sessionStorage.setItem("token", res.data.token)
-              sessionStorage.setItem('IsLoggedIn', true)
-              sessionStorage.setItem("enroll", res.data.user_data.student.enrolmentNumber)
-            }
-        })
+       const expiresAt = 60*24*10;
+       let date = new Date();
+       date.setTime(date.getTime() + expiresAt*60*1000);
+       let options = { path: '/', expires: date}
+
+
+       if(CookieService.get('access_token') != undefined){
+            console.log(CookieService.get('access_token'))
+            code = CookieService.get('access_token')
+    
+            await axios.post('http://127.0.0.1:8000/users/cookielogin/', { code: code }).then((res)=>{
+                if(res.data.token !== undefined){
+                    console.log(res.data)
+                    sessionStorage.setItem("token", res.data.token)
+                    CookieService.set('access_token',res.data.token,options)
+                    sessionStorage.setItem('IsLoggedIn', true)
+                    sessionStorage.setItem("enroll", res.data.user_data.enroll)
+                  }   
+            })
+
+       }else{
+           let url = window.location.href
+           code = (url.match(/code=([^&]+)/) || [])[1]
+
+           await axios.post('http://127.0.0.1:8000/users/login/', { code: code }).then((res)=>{
+            if(res.data.token !== undefined){
+                sessionStorage.setItem("token", res.data.token)
+                CookieService.set('access_token',res.data.token,options)
+                sessionStorage.setItem('IsLoggedIn', true)
+                sessionStorage.setItem("enroll", res.data.user_data.student.enrolmentNumber)
+              }
+          })
+       }
 
         await fetch(`http://127.0.0.1:8000/users/?boss=&enroll=${parseInt(sessionStorage.getItem('enroll'))}&username=&email=`,{
             headers: {
@@ -76,7 +103,7 @@ class LogIn extends Component{
                     <Dimmer active>
                         <Loader size='massive'>Logging In</Loader>
                     </Dimmer>
-                </Container>            
+                </Container>       
     )
         }
     //     if (this.state.isRequestNotSuccessful) {
