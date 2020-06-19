@@ -18,6 +18,7 @@ import {
 
 const axios = require('axios');
 
+
 class LogIn extends Component{
     constructor(props){
         super(props)
@@ -37,7 +38,7 @@ class LogIn extends Component{
        let options = { path: '/', expires: date}
 
 
-       if(CookieService.get('access_token') != undefined){
+       if(CookieService.get('access_token')){
             console.log(CookieService.get('access_token'))
             code = CookieService.get('access_token')
     
@@ -93,6 +94,8 @@ class LogIn extends Component{
         })
                 
     };
+
+
 
     render(){
         if (this.state.IsLoggedIn) {

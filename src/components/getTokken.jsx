@@ -6,7 +6,6 @@ import {
 import { Redirect } from 'react-router-dom';
 
 class GetTokken extends Component{
-
     render(){
         if(CookieService.get('access_token') != undefined){
             return <Redirect to='/login' />

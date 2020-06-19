@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Input, Icon, Menu, Dropdown  } from 'semantic-ui-react';
 import './styles/navbar.scss';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { ProjectForm } from './projects';
-import { Redirect } from 'react-router';
+import CookieService from './services/CookieService';
 
   
 
@@ -14,6 +14,7 @@ const options = [
     { key: 3, text: 'Items are kept within view', value: 3 },
   ]
 
+
 class Navbar extends Component {
 
     constructor(props){
@@ -21,9 +22,11 @@ class Navbar extends Component {
 
         this.state={
             option: false,
+            logout: false,
         }
 
         this.showOptions = this.showOptions.bind(this)
+        this.logout = this.logout.bind(this)
     }
 
     showOptions(){
@@ -32,12 +35,22 @@ class Navbar extends Component {
       })
     }
 
+    logout(){
+      let options = { path: '/',  expires: -1}
+      CookieService.remove('access_token', options);
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('IsLoggedIn')
+      this.setState({
+        logout: true,
+      })
+    }
 
     render(){
         const { activeItem } = this.state
         if(sessionStorage.getItem('IsLoggedIn') == 'true'){
           return(
             <React.Fragment>
+              {this.state.logout ? <Redirect to='/' /> : ''}
         <Menu icon className='navbar'>
           <Menu.Item
             name='bars'
@@ -92,7 +105,7 @@ class Navbar extends Component {
         <div className="darktheme">
         <i class="fas fa-moon"></i>
         </div>
-        <div className="logout">
+        <div className="logout" onClick={(event) => this.logout()}>
         <i class="fas fa-sign-out-alt"></i>
         </div>
         </div>
