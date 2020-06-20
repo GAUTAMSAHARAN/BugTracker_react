@@ -17,6 +17,7 @@ import { Link, Redirect } from 'react-router-dom';
 import Background from './images/options.jpg';
 import moment from 'moment';
 import App from './editor';
+import WebSocketInstance from './websocket.js';
 import Avatar from 'react-avatar';
 
 
@@ -119,10 +120,18 @@ class Issue extends Component{
          failMsg: '',
       }
       this.statusUpdateRequest = this.statusUpdateRequest.bind(this)
+      this.commentsLoder = this.commentsLoder.bind(this)
+      this.fetchComment = this.fetchComment.bind(this)
+      this.newComment = this.newComment.bind(this)
     }
 
     componentDidMount(){
        const { IssueId } = this.props.location.state 
+
+       WebSocketInstance.connect(`ws://localhost:8000/bug_reporter/ws/comments/${IssueId}`)
+       WebSocketInstance.addCallbacks(this.commentsLoder, this.newComment)
+       this.ma = setInterval((event)=>this.fetchComment(), 500)
+
        fetch(`http://127.0.0.1:8000/issues/${IssueId}/`,{
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -182,25 +191,48 @@ class Issue extends Component{
           console.error('There was an error!', error);
           });
 
-        fetch(`http://127.0.0.1:8000/issues/${IssueId}/comments/`,{
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-            'Authorization': `Token ${sessionStorage.getItem('token')}`,  
-           },
-        })
-        .then(async response => {
-            let results =  await response.json()
-            if(response.status == 200){
-              this.setState({
-                IssueComments: results,
-                updateComment: results,
-              })
-            }
-        })
-        .catch(error=>{
-          console.error('There was an error!', error);
-        })
+        // fetch(`http://127.0.0.1:8000/issues/${IssueId}/comments/`,{
+        //   headers: {
+        //     "Content-type": "application/json; charset=UTF-8",
+        //     'Authorization': `Token ${sessionStorage.getItem('token')}`,  
+        //    },
+        // })
+        // .then(async response => {
+        //     let results =  await response.json()
+        //     if(response.status == 200){
+        //       this.setState({
+        //         IssueComments: results,
+        //         updateComment: results,
+        //       })
+        //     }
+        // })
+        // .catch(error=>{
+        //   console.error('There was an error!', error);
+        // })
+
+
     }
+
+  fetchComment() {
+      if (WebSocketInstance.state() === 1) {
+          clearInterval(this.ma)
+          console.log('fetch')
+          WebSocketInstance.fetchMessages()
+      }
+  }
+
+  commentsLoder(data) {
+      console.log('loder')
+      const comments = data["data"]
+      this.setState({ IssueComments: comments })
+  }
+
+  newComment(data) {
+      console.log("test2")
+      const comment = data.comment
+      console.log(comment)
+      this.setState({ IssueComments: [comment, ...this.state.IssueComments] })
+  }
 
      async createComment(data){
           const response = await fetch('http://127.0.0.1:8000/comments/',{
@@ -226,8 +258,11 @@ class Issue extends Component{
     }
     
     onSubmit = e =>{
-        let data = JSON.stringify(this.state.values)
-        this.createComment(data);
+        // this.createComment(data);
+        WebSocketInstance.newComment(this.state.values.body)
+        this.setState({
+          commentForm: false,
+        })
     }
 
     OpenOption(){
